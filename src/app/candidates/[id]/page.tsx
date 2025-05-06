@@ -301,73 +301,57 @@ export default function CandidateDetail() {
         </div>
         
         {/* 후보자 프로필 */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <div className="flex flex-col md:flex-row md:items-start">
-            <div className="md:mr-8 w-full md:w-1/4 mb-6 md:mb-0 flex justify-center md:justify-start">
-              {candidate.profileImage && (
-                <Image
-                  src={candidate.profileImage}
-                  alt={candidate.name}
-                  width={200}
-                  height={200}
-                  className="rounded-full border-4 border-white shadow-md w-40 h-40 md:w-full md:h-auto object-cover"
-                />
-              )}
+        <div className="bg-white rounded-lg shadow-sm p-8 mb-8 flex flex-col md:flex-row md:items-start">
+          <div className="flex-shrink-0 flex justify-center md:justify-start w-full md:w-[240px] mb-6 md:mb-0">
+            {candidate.profileImage && (
+              <Image
+                src={candidate.profileImage}
+                alt={candidate.name}
+                width={200}
+                height={300}
+                className="rounded-xl border border-divider object-cover w-[200px] h-[300px] bg-gray-100"
+              />
+            )}
+          </div>
+          <div className="flex-1 md:ml-12">
+            <div className="flex items-center mb-2">
+              <h1 className="text-[32px] font-bold leading-tight mr-3 text-text-primary">{candidate.name}</h1>
+              <span className="text-lg font-normal text-text-secondary">{candidate.party}</span>
             </div>
-            
-            <div className="flex-1">
-              <div className="flex items-center mb-2">
-                <h1 className="text-3xl font-bold mr-3">{candidate.name}</h1>
-                <span className="bg-gray-100 text-gray-700 text-sm py-1 px-3 rounded-full">
-                  {candidate.party}
-                </span>
+            <blockquote className="text-primary text-xl md:text-2xl font-semibold leading-snug my-4" style={{fontFamily: 'Pretendard, Inter, Roboto, sans-serif'}}>
+              “{candidate.slogan}”
+            </blockquote>
+            <div className="flex flex-col md:flex-row md:space-x-12 mt-6">
+              <div className="mb-4 md:mb-0 min-w-[180px]">
+                <div className="text-[16px] text-text-secondary mb-1">나이 / 출생지</div>
+                <div className="text-[16px] text-text-primary font-medium mb-3">{candidate.age}세 / {candidate.birthplace}</div>
+                <div className="text-[16px] text-text-secondary mb-1">학력</div>
+                <ul className="text-[16px] text-text-primary font-medium list-disc list-inside">
+                  {candidate.education.map((edu, index) => (
+                    <li key={index}>{edu}</li>
+                  ))}
+                </ul>
               </div>
-              
-              <blockquote className="border-l-4 border-primary pl-4 italic text-gray-600 my-4">
-                &ldquo;{candidate.slogan}&rdquo;
-              </blockquote>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mt-6">
-                <div>
-                  <h3 className="text-sm text-gray-500 mb-1">나이</h3>
-                  <p>{candidate.age}세</p>
-                </div>
-                <div>
-                  <h3 className="text-sm text-gray-500 mb-1">출생지</h3>
-                  <p>{candidate.birthplace}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm text-gray-500 mb-1">학력</h3>
-                  <ul className="list-disc list-inside pl-0 text-sm">
-                    {candidate.education.map((edu, index) => (
-                      <li key={index} className="mb-1">{edu}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-sm text-gray-500 mb-1">주요 경력</h3>
-                  <ul className="list-disc list-inside pl-0 text-sm">
-                    {candidate.career.map((career, index) => (
-                      <li key={index} className="mb-1">{career}</li>
-                    ))}
-                  </ul>
-                </div>
+              <div className="flex-1">
+                <div className="text-[16px] text-text-secondary mb-1">주요 경력</div>
+                <ul className="text-[16px] text-text-primary font-medium list-disc list-inside">
+                  {candidate.career.map((career, index) => (
+                    <li key={index}>{career}</li>
+                  ))}
+                </ul>
               </div>
-              
-              {candidate.websiteUrl && (
-                <a 
-                  href={candidate.websiteUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="inline-flex items-center text-primary mt-6"
-                >
-                  <span>공식 웹사이트 방문</span>
-                  <div className="w-5 h-5 flex items-center justify-center ml-1">
-                    <i className="ri-external-link-line"></i>
-                  </div>
-                </a>
-              )}
             </div>
+            {candidate.websiteUrl && (
+              <a
+                href={candidate.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-primary text-[16px] font-medium mt-6 hover:underline"
+              >
+                공식 웹사이트 방문
+                <span className="ml-1"><i className="ri-external-link-line"></i></span>
+              </a>
+            )}
           </div>
         </div>
         
@@ -395,7 +379,7 @@ export default function CandidateDetail() {
               }`}
               onClick={() => handleTabChange('statements')}
             >
-              주요 발언
+              지역 공약
               {activeTab === 'statements' && (
                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></span>
               )}
@@ -408,7 +392,7 @@ export default function CandidateDetail() {
               }`}
               onClick={() => handleTabChange('qna')}
             >
-              Q&A
+              토론회 발언
               {activeTab === 'qna' && (
                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></span>
               )}
@@ -416,59 +400,76 @@ export default function CandidateDetail() {
           </div>
         </div>
         
-        {/* 공약 목록 - 10대 공약 */}
+        {/* 10대 공약 탭 컨텐츠 */}
         {activeTab === 'pledges' && (
-          <div>
-            <h2 className="text-2xl font-bold mb-6">{candidate.name}의 10대 공약</h2>
-            
-            <div className="space-y-4">
-              {pledges
-                .sort((a, b) => a.order - b.order)
-                .map(pledge => (
-                  <PledgeAccordion
-                    key={pledge.id}
-                    pledge={pledge}
+          <>
+            {/* 10대 핵심 공약 섹션 */}
+            <section className="bg-white rounded-2xl shadow-sm p-6 mb-8">
+              <h2 className="text-2xl font-bold mb-6">10대 핵심 공약</h2>
+              <div className="space-y-4">
+                {pledges.slice(0, 3).map((pledge) => (
+                  <div key={pledge.id} className="pledge-card p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-all">
+                    <div className="flex">
+                      <div className="flex-shrink-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center mr-3">
+                        <span className="font-semibold">{pledge.order}</span>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg">{pledge.title}</h3>
+                        <p className="text-text-secondary mt-1">{pledge.summary}</p>
+                        <button 
+                          className="pledge-detail-btn text-primary border border-primary rounded-button px-3 py-1 text-sm inline-flex items-center mt-2 whitespace-nowrap"
+                          onClick={() => setSelectedPledge(pledge.id)}
+                        >
+                          <span>공약 전문 보기</span>
+                          <i className="ri-arrow-right-line ml-1"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 text-center">
+                <button 
+                  className="bg-primary text-white py-2 px-6 rounded-button font-medium hover:bg-opacity-90 transition-all whitespace-nowrap"
+                  onClick={() => document.getElementById('detailed-pledges')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  10대 공약 전체 보기
+                </button>
+              </div>
+            </section>
+
+            {/* 세부 공약 상세 섹션 */}
+            <section id="detailed-pledges" className="bg-white rounded-2xl shadow-sm p-6 mb-8">
+              <h2 className="text-2xl font-bold mb-6">세부 공약 상세</h2>
+
+              <div className="space-y-4">
+                {pledges.map((pledge) => (
+                  <PledgeAccordion 
+                    key={pledge.id} 
+                    pledge={pledge} 
                     openPledgeId={selectedPledge}
                     setOpenPledgeId={setSelectedPledge}
                   />
                 ))}
-            </div>
-          </div>
+              </div>
+            </section>
+          </>
         )}
 
         {/* 주요 발언 */}
         {activeTab === 'statements' && (
-          <div>
-            <h2 className="text-2xl font-bold mb-6">{candidate.name}의 주요 발언</h2>
-            <div className="text-center py-12">
-              <Image 
-                src="/images/coming-soon.svg" 
-                alt="준비 중입니다" 
-                width={200} 
-                height={200} 
-                className="mx-auto mb-6"
-              />
-              <h3 className="text-xl font-medium text-gray-700 mb-2">준비 중입니다</h3>
-              <p className="text-gray-500">해당 콘텐츠는 현재 준비 중입니다. 빠른 시일 내에 제공하겠습니다.</p>
-            </div>
+          <div className="text-center py-12">
+            <h3 className="text-xl font-medium text-gray-700 mb-2">준비 중입니다</h3>
+            <p className="text-gray-500">해당 콘텐츠는 현재 준비 중입니다. 빠른 시일 내에 제공하겠습니다.</p>
           </div>
         )}
 
         {/* Q&A */}
         {activeTab === 'qna' && (
-          <div>
-            <h2 className="text-2xl font-bold mb-6">{candidate.name}에 대한 Q&A</h2>
-            <div className="text-center py-12">
-              <Image 
-                src="/images/coming-soon.svg" 
-                alt="준비 중입니다" 
-                width={200} 
-                height={200} 
-                className="mx-auto mb-6"
-              />
-              <h3 className="text-xl font-medium text-gray-700 mb-2">준비 중입니다</h3>
-              <p className="text-gray-500">해당 콘텐츠는 현재 준비 중입니다. 빠른 시일 내에 제공하겠습니다.</p>
-            </div>
+          <div className="text-center py-12">
+            <h3 className="text-xl font-medium text-gray-700 mb-2">준비 중입니다</h3>
+            <p className="text-gray-500">해당 콘텐츠는 현재 준비 중입니다. 빠른 시일 내에 제공하겠습니다.</p>
           </div>
         )}
       </div>
