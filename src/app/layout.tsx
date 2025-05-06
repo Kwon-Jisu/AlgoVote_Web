@@ -3,7 +3,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter, Roboto } from 'next/font/google'
 import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
+import FooterWrapper from '@/components/layout/FooterWrapper';
 
 // Google Fonts를 next/font를 통해 로딩
 const inter = Inter({
@@ -51,6 +51,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
   return (
     <html lang="ko" className={`${inter.variable} ${roboto.variable}`}>
       <head>
@@ -61,7 +62,7 @@ export default function RootLayout({
         <main className="flex-grow">
           {children}
         </main>
-        <Footer />
+        <FooterWrapper />
       </body>
     </html>
   )

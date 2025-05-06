@@ -14,8 +14,8 @@ export default function Home() {
         <div className="container mx-auto max-w-4xl text-center fade-in">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary mb-6">정확한 정보를 바탕으로, 현명한 선택을</h1>
           <p className="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-8">
-            더 나은 대한민국을 위한 선택, 객관적인 정보 비교에서 시작됩니다.<br></br>
-            알고투표는 유권자들이 정책 비전과 실행 계획, 그리고 객관적인 평가를 바탕으로 심층적으로 비교 분석하여 현명한 결정을 내릴 수 있도록 돕는 플랫폼입니다.
+            더 나은 선택은 객관적인 정보 비교에서 시작됩니다.<br></br>
+            알고투표는 유권자가 정책과 비전을 쉽게 비교하고 현명한 결정을 내릴 수 있도록 돕는 플랫폼입니다.
           </p>
           <div className="flex justify-center">
             <Link href="/chatbot" className="btn-primary whitespace-nowrap">
@@ -39,9 +39,11 @@ export default function Home() {
                 </span>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 gap-6 md:gap-8">
             {mainCandidates.map((candidate) => (
-              <CandidateCard key={candidate.id} candidate={candidate} />
+              <div key={candidate.id}>
+                <CandidateCard candidate={candidate} />
+              </div>
             ))}
           </div>
           <div className="text-center mt-8">
@@ -80,7 +82,7 @@ export default function Home() {
                 <i className="ri-robot-2-line text-primary text-xl"></i>
               </div>
               <h3 className="text-xl font-bold text-center mb-3">AI 질의응답</h3>
-              <p className="text-text-secondary text-center">AI 챗봇을 통해 후보자의 정책과 비전에 대해 궁금한 점을 질문하면 상세한 답변을 제공합니다.</p>
+              <p className="text-text-secondary text-center">AI 후보자와 직접 대화하면서 정책과 비전에 대한 정보를 제공합니다.</p>
             </div>
           </div>
         </div>

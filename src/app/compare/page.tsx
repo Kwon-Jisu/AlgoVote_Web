@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Image from 'next/image';
-import ChatBotButton from '../../components/ui/ChatBotButton';
 import { candidates } from '@/data/candidates';
 
 export default function Compare() {
@@ -349,7 +348,8 @@ export default function Compare() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* 데스크탑: 기존 테이블 */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full min-w-[768px]">
               <thead>
                 <tr className="bg-gray-50">
@@ -394,7 +394,7 @@ export default function Compare() {
                                 <i className={expandedItems[`${item.id}-${index}`] ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'}></i>
                               </div>
                             </button>
-                            <div className={`mt-2 text-sm text-gray-600 ${expandedItems[`${item.id}-${index}`] ? 'block' : 'hidden'}`}>
+                            <div className={`mt-2 text-sm text-gray-600 ${expandedItems[`${item.id}-${index}`] ? 'block' : 'hidden'}`}> 
                               {policy.details.map((detail, detailIndex) => (
                                 <p key={detailIndex}>- {detail}</p>
                               ))}
@@ -406,6 +406,75 @@ export default function Compare() {
                               </div>
                             </div>
                           </div>
+                        </div>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* 모바일: 정책항목 x축, 후보자 y축 */}
+          <div className="block md:hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="p-4 text-left w-[20%]">정책항목</th>
+                  {policyItems.map((item) => (
+                    <th key={item.id} className="p-4 text-left">
+                      <div className="font-medium">{item.title}</div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {candidates.slice(0, 4).map((candidate, cIdx) => (
+                  <tr key={candidate.id}>
+                    <td className="p-4 border-t border-gray-200 align-top">
+                      <div className="flex flex-col items-center">
+                        <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden mb-2">
+                          {candidate.profileImage && (
+                            <Image 
+                              src={candidate.profileImage} 
+                              alt={candidate.name}
+                              width={40}
+                              height={40}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <span className="font-bold text-base text-center">{candidate.name}</span>
+                      </div>
+                    </td>
+                    {policyItems.map((item, pIdx) => (
+                      <td key={item.id} className="p-4 border-t border-gray-200">
+                        <div className="bg-white rounded-lg shadow-sm p-4">
+                          <p>{item.policies[cIdx]?.summary || '-'}</p>
+                          {item.policies[cIdx] && (
+                            <div className="mt-2">
+                              <button
+                                className="flex items-center text-sm text-primary"
+                                onClick={() => toggleItemExpand(`${item.id}-${cIdx}`)}
+                              >
+                                <span>{expandedItems[`${item.id}-${cIdx}`] ? '접기' : '더 보기'}</span>
+                                <div className="w-5 h-5 flex items-center justify-center ml-1">
+                                  <i className={expandedItems[`${item.id}-${cIdx}`] ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'}></i>
+                                </div>
+                              </button>
+                              <div className={`mt-2 text-sm text-gray-600 ${expandedItems[`${item.id}-${cIdx}`] ? 'block' : 'hidden'}`}> 
+                                {item.policies[cIdx].details.map((detail, detailIndex) => (
+                                  <p key={detailIndex}>- {detail}</p>
+                                ))}
+                                <div className="mt-2 text-xs text-gray-500">
+                                  출처:
+                                  <a href="#" className="text-primary underline ml-1">
+                                    {item.policies[cIdx].source}
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </td>
                     ))}
@@ -526,9 +595,6 @@ export default function Compare() {
           </a>
         </div>
       </main>
-
-      {/* 챗봇 플로팅 버튼 */}
-      <ChatBotButton />
     </div>
   );
 } 
