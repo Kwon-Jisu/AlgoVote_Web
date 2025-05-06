@@ -1,11 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { nanoid } from 'nanoid';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { candidates } from '@/data/candidates';
-import { ChatMessage } from '@/types';
-import { useRouter } from 'next/navigation';
 
 export default function ChatbotPage() {
   const router = useRouter();
