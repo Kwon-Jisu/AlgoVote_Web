@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { candidates } from '@/data/candidates';
 
 export default function Compare() {
@@ -400,9 +401,7 @@ export default function Compare() {
                               ))}
                               <div className="mt-2 text-xs text-gray-500">
                                 출처:
-                                <a href="#" className="text-primary underline ml-1">
-                                  {policy.source}
-                                </a>
+                                <span className="text-primary underline ml-1">{policy.source}</span>
                               </div>
                             </div>
                           </div>
@@ -447,7 +446,7 @@ export default function Compare() {
                         <span className="font-bold text-base text-center">{candidate.name}</span>
                       </div>
                     </td>
-                    {policyItems.map((item, pIdx) => (
+                    {policyItems.map((item) => (
                       <td key={item.id} className="p-4 border-t border-gray-200">
                         <div className="bg-white rounded-lg shadow-sm p-4">
                           <p>{item.policies[cIdx]?.summary || '-'}</p>
@@ -468,9 +467,7 @@ export default function Compare() {
                                 ))}
                                 <div className="mt-2 text-xs text-gray-500">
                                   출처:
-                                  <a href="#" className="text-primary underline ml-1">
-                                    {item.policies[cIdx].source}
-                                  </a>
+                                  <span className="text-primary underline ml-1">{item.policies[cIdx].source}</span>
                                 </div>
                               </div>
                             </div>
@@ -566,12 +563,15 @@ export default function Compare() {
                         </li>
                       )}
                     </ul>
-                    <a href="#" className="inline-flex items-center text-primary mt-6">
-                      <span>출처 보기</span>
+                    <Link
+                      href="/chatbot"
+                      className="inline-flex items-center text-primary mt-6"
+                    >
+                      <span>AI 챗봇으로 정책 질문하기</span>
                       <div className="w-5 h-5 flex items-center justify-center ml-1">
-                        <i className="ri-external-link-line"></i>
+                        <i className="ri-robot-2-line"></i>
                       </div>
-                    </a>
+                    </Link>
                   </div>
                 </div>
               );
@@ -590,9 +590,12 @@ export default function Compare() {
               <p className="text-text-secondary">AI 챗봇에게 질문하고 더 자세한 정보를 얻어보세요.</p>
             </div>
           </div>
-          <a href="/chatbot" className="bg-primary text-white px-6 py-3 rounded-button font-medium whitespace-nowrap">
+          <Link
+            href="/chatbot"
+            className="bg-primary text-white px-6 py-3 rounded-button font-medium whitespace-nowrap"
+          >
             챗봇에게 질문하러 가기
-          </a>
+          </Link>
         </div>
       </main>
     </div>
