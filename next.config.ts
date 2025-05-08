@@ -16,6 +16,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  
+  // API 요청 프록시 설정
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://algovote.onrender.com/:path*',
+      },
+    ]
+  },
 };
 
 export default nextConfig;
