@@ -10,16 +10,18 @@ import { ChatMessage } from "@/types";
 // RAG API 호출 함수
 async function fetchRagResponse(question: string, candidateInfo: string) {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+    const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://algovote.onrender.com";
     const response = await fetch(`${apiUrl}/api/question`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
       body: JSON.stringify({
         question: `${candidateInfo} ${question}`,
         match_count: 5,
       }),
+      mode: "cors",
     });
 
     if (!response.ok) {
