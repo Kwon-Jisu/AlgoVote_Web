@@ -23,9 +23,9 @@ app = FastAPI(
 # CORS 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 프로덕션 환경에서는 특정 도메인으로 제한해야 함
+    allow_origins=["https://www.algovote.info", "http://www.algovote.info", "https://algovote.info", "http://algovote.info", "http://localhost:3000"],  # 프로덕션 환경에서는 특정 도메인으로 제한해야 함
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -74,6 +74,18 @@ async def create_policy(policy: PolicyCreate, candidate_id: int, db: Session = D
 # 챗봇 엔드포인트
 @app.post("/chat/", response_model=ChatResponse)
 async def chat(request: ChatRequest, db: Session = Depends(get_db)):
+    # 관련 정책 가져오기
+    policies = []
+    if request.candidate_ids:
+        policies = db.query(Policy).filter(Policy.candidate_id.in_(request.candidate_ids)).all()
+    
+    # AI 응답 생성
+    response = await get_ai_response(request.question, policies)
+    return response
+
+# 새로운 API 엔드포인트 - /api/question
+@app.post("/api/question")
+async def answer_question(request: ChatRequest, db: Session = Depends(get_db)):
     # 관련 정책 가져오기
     policies = []
     if request.candidate_ids:

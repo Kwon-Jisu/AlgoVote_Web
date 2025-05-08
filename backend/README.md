@@ -72,4 +72,5 @@ uvicorn app.main:app --reload
 - `POST /candidates/`: 후보자 생성 
 - `GET /policies/`: 모든 정책 조회
 - `POST /policies/`: 정책 생성
-- `POST /chat/`: AI 챗봇과 대화 
+- `POST /chat/`: AI 챗봇과 대화
+- `POST /api/question`: 질문에 대한 AI 답변 생성 (웹 프론트엔드용 엔드포인트) 
