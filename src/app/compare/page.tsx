@@ -3,11 +3,29 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { candidates } from '@/data/candidates';
+import { candidates, comparisonData, categoryDescriptions } from '@/data/candidates';
+
+// 타입 정의
+type PolicyDetail = {
+  candidate: string;
+  candidateId: string;
+  summary: string;
+  details: string[];
+  source: string;
+};
+
+type PolicyItem = {
+  id: string;
+  title: string;
+  policies: PolicyDetail[];
+};
+
+// 카테고리 데이터에 대한 타입 정의
+type CategoryData = Record<string, string>;
 
 export default function Compare() {
   const [viewType, setViewType] = React.useState<'category' | 'region'>('category');
-  const [selectedCategory, setSelectedCategory] = React.useState('economy');
+  const [selectedCategory, setSelectedCategory] = React.useState<keyof typeof comparisonData>('경제');
   const [selectedRegion, setSelectedRegion] = React.useState('capital');
   const [expandedItems, setExpandedItems] = React.useState<Record<string, boolean>>({});
 
@@ -62,148 +80,35 @@ export default function Compare() {
     };
   }, [viewType, selectedCategory]); // 뷰 타입이나 카테고리가 변경될 때마다 재실행
 
-  // 예시 정책 데이터
-  const policyItems = [
-    {
-      id: 'youth-jobs',
-      title: '청년 일자리 창출',
-      policies: [
-        {
-          candidate: '이재명',
-          summary: '청년 일자리 100만개 창출 및 청년 기업가 지원 확대',
-          details: [
-            '청년 창업 지원금 확대 (최대 5천만원)',
-            '청년 일자리 매칭 플랫폼 구축',
-            '청년 기업 세금 감면 혜택 3년간 제공',
-            '지역 청년 일자리 지원 특별 프로그램 운영'
-          ],
-          source: '후보 공식 정책집 (PDF)'
-        },
-        {
-          candidate: '윤석열',
-          summary: '민간 주도 일자리 창출 및 청년 취업 지원 정책 강화',
-          details: [
-            '기업 주도 청년 일자리 창출 세제 혜택 제공',
-            '청년 구직 활동 지원금 확대 (월 80만원)',
-            '중소기업 청년 취업자 소득세 감면 확대',
-            '청년 취업 교육 바우처 제도 도입'
-          ],
-          source: '후보 공식 정책집 (PDF)'
-        },
-        {
-          candidate: '한덕수',
-          summary: '공공 부문 중심 양질의 청년 일자리 확대',
-          details: [
-            '공공기관 청년 의무 고용 비율 30% 확대',
-            '청년 취업자 주거 지원 특별 프로그램',
-            '첫 취업 청년 소득세 3년 면제',
-            '청년 창업 실패 시 재기 지원 프로그램'
-          ],
-          source: '후보 공식 정책집 (PDF)'
-        },
-      ]
-    },
-    {
-      id: 'small-business',
-      title: '중소기업 지원',
-      policies: [
-        {
-          candidate: '이재명',
-          summary: '중소기업 디지털 전환 지원 및 금융 지원 확대',
-          details: [
-            '중소기업 디지털 전환 지원금 2조원 편성',
-            '중소기업 저금리 대출 확대 (금리 1.5%)',
-            '중소기업 기술 보호 강화 제도 마련',
-            '중소기업 수출 지원 프로그램 확대'
-          ],
-          source: '후보 공식 정책집 (PDF)'
-        },
-        {
-          candidate: '윤석열',
-          summary: '중소기업 규제 완화 및 세제 혜택 확대',
-          details: [
-            '중소기업 규제 샌드박스 제도 도입',
-            '중소기업 법인세 감면 확대 (최대 20%)',
-            '중소기업 R&D 세액공제 확대',
-            '중소기업 상생협력 지원 강화'
-          ],
-          source: '후보 공식 정책집 (PDF)'
-        },
-        {
-          candidate: '한덕수',
-          summary: '노동친화적 중소기업 지원 확대',
-          details: [
-            '중소기업 근로시간 단축 지원금 확대',
-            '노동자 복지 증진 중소기업 세제 지원',
-            '중소기업 직원 교육비 지원 확대',
-            '중소기업 안전 투자 지원금 신설'
-          ],
-          source: '후보 공식 정책집 (PDF)'
-        },
-        {
-          candidate: '안철수',
-          summary: '중소기업 기술 혁신 집중 지원',
-          details: [
-            '중소기업 R&D 전담 지원 센터 설립',
-            '혁신 중소기업 세액 공제 확대',
-            '중소기업-대학 협력 지원 강화',
-            '신기술 개발 중소기업 특허 비용 지원'
-          ],
-          source: '후보 공식 정책집 (PDF)'
-        }
-      ]
-    },
-    {
-      id: 'real-estate',
-      title: '부동산 정책',
-      policies: [
-        {
-          candidate: '이재명',
-          summary: '공공주택 공급 확대 및 부동산 투기 근절',
-          details: [
-            '공공주택 50만호 추가 공급',
-            '다주택자 종합부동산세 강화',
-            '임대차 3법 보완 및 강화',
-            '토지 공개념 도입 검토'
-          ],
-          source: '후보 공식 정책집 (PDF)'
-        },
-        {
-          candidate: '윤석열',
-          summary: '민간 주도 주택 공급 확대 및 부동산 규제 완화',
-          details: [
-            '민간 주택 공급 확대를 위한 규제 완화',
-            '재건축·재개발 규제 완화',
-            '종합부동산세 개편 및 완화',
-            '1가구 1주택자 양도소득세 부담 경감'
-          ],
-          source: '후보 공식 정책집 (PDF)'
-        },
-        {
-          candidate: '한덕수',
-          summary: '주거 공공성 강화 및 투기 근절',
-          details: [
-            '공공 임대주택 100만호 확대',
-            '초과이익환수제 재도입',
-            '토지공개념 및 불로소득 환수',
-            '1가구 1주택 원칙 세제 지원'
-          ],
-          source: '후보 공식 정책집 (PDF)'
-        },
-        {
-          candidate: '안철수',
-          summary: '시장 안정화 및 주거 복지 확대',
-          details: [
-            '시장 수요에 맞는 공급 정책 도입',
-            '부동산 과세 체계 합리적 개편',
-            '청년·신혼부부 주택 구매 지원 확대',
-            '임대주택 품질 개선 및 관리 강화'
-          ],
-          source: '후보 공식 정책집 (PDF)'
-        }
-      ]
-    }
-  ];
+  // comparisonData에서 정책 아이템 생성
+  const policyItems = React.useMemo((): PolicyItem[] => {
+    // 선택된 카테고리에 해당하는 데이터만 필터링
+    if (!comparisonData[selectedCategory]) return [];
+
+    // 타입 캐스팅을 명시적으로 수행
+    const categoryData = comparisonData[selectedCategory] as CategoryData;
+    
+    // 정책 항목 생성
+    return [
+      {
+        id: `${selectedCategory.toLowerCase()}-policy`,
+        title: selectedCategory,
+        policies: candidates.map(candidate => {
+          const candidateId = candidate.id;
+          // candidateId가 string이므로 인덱싱 가능
+          const policyDetails = categoryData[candidateId]?.split(' · ') || [];
+          
+          return {
+            candidate: candidate.name,
+            candidateId,
+            summary: categoryData[candidateId] || '-',
+            details: policyDetails,
+            source: '후보 공식 정책집 (PDF)'
+          };
+        }).filter(policy => policy.summary !== '-') // 정책이 없는 후보는 제외
+      }
+    ];
+  }, [selectedCategory]);
 
   // 지역별 공약 데이터
   const regionalPromises = {
@@ -250,6 +155,9 @@ export default function Compare() {
       }
     ]
   };
+
+  // categoryDescription에 있는 카테고리 키 배열
+  const categoryKeys = Object.keys(categoryDescriptions) as Array<keyof typeof categoryDescriptions>;
 
   return (
     <div className="bg-background min-h-screen">
@@ -319,7 +227,7 @@ export default function Compare() {
         <section id="category-section" className={`mb-8 ${viewType === 'category' ? 'block' : 'hidden'}`}>
           <div className="overflow-x-auto whitespace-nowrap pb-4 mb-6">
             <div className="flex space-x-3">
-              {['economy', 'welfare', 'education', 'environment', 'diplomacy', 'housing'].map((category) => (
+              {categoryKeys.map((category) => (
                 <div key={category} className="relative">
                   <input 
                     type="radio" 
@@ -337,17 +245,18 @@ export default function Compare() {
                         : 'bg-gray-100 text-text-secondary hover:bg-gray-200'
                     }`}
                   >
-                    {category === 'economy' && '경제'}
-                    {category === 'welfare' && '복지'}
-                    {category === 'education' && '교육'}
-                    {category === 'environment' && '환경'}
-                    {category === 'diplomacy' && '외교·안보'}
-                    {category === 'housing' && '주거'}
+                    {category}
                   </label>
                 </div>
               ))}
             </div>
           </div>
+
+          {selectedCategory && categoryDescriptions[selectedCategory] && (
+            <div className="mb-6 text-text-secondary">
+              <p>{categoryDescriptions[selectedCategory]}</p>
+            </div>
+          )}
 
           {/* 데스크탑: 기존 테이블 */}
           <div className="hidden md:block overflow-x-auto">
@@ -396,7 +305,7 @@ export default function Compare() {
                               </div>
                             </button>
                             <div className={`mt-2 text-sm text-gray-600 ${expandedItems[`${item.id}-${index}`] ? 'block' : 'hidden'}`}> 
-                              {policy.details.map((detail, detailIndex) => (
+                              {policy.details && policy.details.map((detail: string, detailIndex: number) => (
                                 <p key={detailIndex}>- {detail}</p>
                               ))}
                               <div className="mt-2 text-xs text-gray-500">
@@ -446,35 +355,38 @@ export default function Compare() {
                         <span className="font-bold text-base text-center">{candidate.name}</span>
                       </div>
                     </td>
-                    {policyItems.map((item) => (
-                      <td key={item.id} className="p-4 border-t border-gray-200">
-                        <div className="bg-white rounded-lg shadow-sm p-4">
-                          <p>{item.policies[cIdx]?.summary || '-'}</p>
-                          {item.policies[cIdx] && (
-                            <div className="mt-2">
-                              <button
-                                className="flex items-center text-sm text-primary"
-                                onClick={() => toggleItemExpand(`${item.id}-${cIdx}`)}
-                              >
-                                <span>{expandedItems[`${item.id}-${cIdx}`] ? '접기' : '더 보기'}</span>
-                                <div className="w-5 h-5 flex items-center justify-center ml-1">
-                                  <i className={expandedItems[`${item.id}-${cIdx}`] ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'}></i>
-                                </div>
-                              </button>
-                              <div className={`mt-2 text-sm text-gray-600 ${expandedItems[`${item.id}-${cIdx}`] ? 'block' : 'hidden'}`}> 
-                                {item.policies[cIdx].details.map((detail, detailIndex) => (
-                                  <p key={detailIndex}>- {detail}</p>
-                                ))}
-                                <div className="mt-2 text-xs text-gray-500">
-                                  출처:
-                                  <span className="text-primary underline ml-1">{item.policies[cIdx].source}</span>
+                    {policyItems.map((item) => {
+                      const candidatePolicy = item.policies.find(p => p.candidate === candidate.name);
+                      return (
+                        <td key={item.id} className="p-4 border-t border-gray-200">
+                          <div className="bg-white rounded-lg shadow-sm p-4">
+                            <p>{candidatePolicy?.summary || '-'}</p>
+                            {candidatePolicy && (
+                              <div className="mt-2">
+                                <button
+                                  className="flex items-center text-sm text-primary"
+                                  onClick={() => toggleItemExpand(`${item.id}-mobile-${cIdx}`)}
+                                >
+                                  <span>{expandedItems[`${item.id}-mobile-${cIdx}`] ? '접기' : '더 보기'}</span>
+                                  <div className="w-5 h-5 flex items-center justify-center ml-1">
+                                    <i className={expandedItems[`${item.id}-mobile-${cIdx}`] ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'}></i>
+                                  </div>
+                                </button>
+                                <div className={`mt-2 text-sm text-gray-600 ${expandedItems[`${item.id}-mobile-${cIdx}`] ? 'block' : 'hidden'}`}> 
+                                  {candidatePolicy.details && candidatePolicy.details.map((detail: string, detailIndex: number) => (
+                                    <p key={detailIndex}>- {detail}</p>
+                                  ))}
+                                  <div className="mt-2 text-xs text-gray-500">
+                                    출처:
+                                    <span className="text-primary underline ml-1">{candidatePolicy.source}</span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                    ))}
+                            )}
+                          </div>
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>

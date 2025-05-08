@@ -7,6 +7,32 @@ import { nanoid } from "nanoid";
 import { candidates } from "@/data/candidates";
 import { ChatMessage } from "@/types";
 
+// RAG API 호출 함수
+async function fetchRagResponse(question: string, candidateInfo: string) {
+  try {
+    const response = await fetch("http://localhost:8000/api/question", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        question: `${candidateInfo} ${question}`,
+        match_count: 5,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API 응답 오류: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.answer;
+  } catch (error) {
+    console.error("RAG API 호출 중 오류 발생:", error);
+    throw error;
+  }
+}
+
 export default function ChatbotCandidatePage() {
   const { candidate } = useParams<{ candidate: string }>();
   const router = useRouter();
@@ -26,6 +52,7 @@ export default function ChatbotCandidatePage() {
       : []
   );
   const [isTyping, setIsTyping] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
   if (!selectedCandidate) {
     return (
@@ -43,63 +70,64 @@ export default function ChatbotCandidatePage() {
     );
   }
 
-  const handleSendMessage = (content: string) => {
-    if (!selectedCandidate) return;
+  const candidateInfo = `${selectedCandidate.name} 후보(${selectedCandidate.party})의 공약에 대해 답변합니다:`;
+
+  const handleSendMessage = async (content: string) => {
+    if (!selectedCandidate || !content.trim()) return;
+    
     const userMessage: ChatMessage = {
       id: nanoid(),
       role: "user",
       content,
       timestamp: new Date(),
     };
+    
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
-    setTimeout(() => {
-      const responses = [
-        {
-          text: `${content}에 대한 제 정책은 다음과 같습니다:`,
-          policies: [
-            "청년 주거 안정을 위한 20만호 공급",
-            "청년 기본소득 30만원 지급",
-            "대학 등록금 부담 경감",
-          ],
-          source: "2022 대선 공약집 23-25페이지",
-          sourceUrl: "https://example.com/policy/youth",
-        },
-        {
-          text: "그 문제에 대해 저는 다음과 같은 해결책을 제시합니다:",
-          policies: [
-            "중소기업 디지털 전환 지원 확대",
-            "지역 균형 발전을 위한 인프라 구축",
-            "공정 경쟁 환경 조성",
-          ],
-          source: "2022 경제정책 백서 42-45페이지",
-          sourceUrl: "https://example.com/policy/economy",
-        },
-        {
-          text: "해당 이슈에 대한 제 입장은 다음과 같습니다:",
-          policies: [
-            "노인 돌봄 서비스 확충",
-            "어르신 의료비 부담 경감",
-            "노인 일자리 확대",
-          ],
-          source: "2022 복지정책 공약집 15-18페이지",
-          sourceUrl: "https://example.com/policy/welfare",
-        },
-      ];
-      const response = responses[Math.floor(Math.random() * responses.length)];
-      const policiesText = response.policies.map((p) => `• ${p}`).join("\n");
+    setInputValue("");
+    
+    try {
+      // RAG API 호출
+      const response = await fetchRagResponse(content, candidateInfo);
+      
+      // 출처 정보 추출 (마지막 줄이 출처인 경우를 가정)
+      let responseText = response;
+      let source = "";
+      
+      const lines = response.split('\n');
+      const lastLine = lines[lines.length - 1].trim();
+      
+      if (lastLine.startsWith('출처:') || lastLine.includes('참고:')) {
+        responseText = lines.slice(0, -1).join('\n');
+        source = lastLine;
+      }
+      
       const botMessage: ChatMessage = {
         id: nanoid(),
         role: "bot",
-        content: `${response.text}\n\n${policiesText}`,
+        content: responseText,
         timestamp: new Date(),
         candidateId: selectedCandidate.id,
-        sourceDescription: response.source,
-        sourceUrl: response.sourceUrl,
+        sourceDescription: source || "2022 선거 공약집",
+        sourceUrl: source ? "https://example.com/policy" : undefined,
       };
+      
       setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      // 오류 발생 시 오류 메시지 표시
+      const errorMessage: ChatMessage = {
+        id: nanoid(),
+        role: "bot",
+        content: "죄송합니다. 답변을 생성하는 중에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+        timestamp: new Date(),
+        candidateId: selectedCandidate.id,
+      };
+      
+      setMessages((prev) => [...prev, errorMessage]);
+      console.error("답변 생성 중 오류:", error);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -202,6 +230,7 @@ export default function ChatbotCandidatePage() {
                 type="button"
                 className="bg-[#F0F4FF] text-[#3449FF] rounded-full px-6 py-3 text-base font-medium hover:bg-[#3449FF] hover:text-white transition-colors border border-[#3449FF] min-w-[140px] min-h-[48px]"
                 onClick={() => handleSendMessage(example)}
+                disabled={isTyping}
               >
                 {example}
               </button>
@@ -219,22 +248,25 @@ export default function ChatbotCandidatePage() {
             type="text"
             className="flex-1 py-2 px-3 text-[#1E1E1E] border-none focus:outline-none"
             placeholder="정책에 대해 궁금한 점을 물어보세요"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={(e) => {
-              if (e.key === "Enter" && e.currentTarget.value.trim()) {
-                handleSendMessage(e.currentTarget.value.trim());
-                e.currentTarget.value = "";
+              if (e.key === "Enter" && inputValue.trim() && !isTyping) {
+                handleSendMessage(inputValue.trim());
               }
             }}
+            disabled={isTyping}
           />
           <button
-            onClick={(e) => {
-              const input = (e.currentTarget.previousElementSibling as HTMLInputElement);
-              if (input.value.trim()) {
-                handleSendMessage(input.value.trim());
-                input.value = "";
+            onClick={() => {
+              if (inputValue.trim() && !isTyping) {
+                handleSendMessage(inputValue.trim());
               }
             }}
-            className="w-10 h-10 flex items-center justify-center text-white bg-[#3449FF] rounded-full ml-2"
+            disabled={!inputValue.trim() || isTyping}
+            className={`w-10 h-10 flex items-center justify-center text-white rounded-full ml-2 ${
+              !inputValue.trim() || isTyping ? "bg-gray-400" : "bg-[#3449FF]"
+            }`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
