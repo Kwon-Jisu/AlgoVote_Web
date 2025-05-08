@@ -15,13 +15,7 @@ from .ai import get_ai_response
 # 데이터베이스 테이블 생성
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(
-    title=APP_NAME,
-    version=VERSION,
-    debug=DEBUG
-)
-
-# CORS 설정
+# 허용할 오리진 리스트
 origins = [
     "https://www.algovote.info",
     "http://www.algovote.info",
@@ -30,43 +24,33 @@ origins = [
     "http://localhost:3000",
 ]
 
+# FastAPI 앱 생성 시 직접 CORS 설정 추가
+app = FastAPI(
+    title=APP_NAME,
+    version=VERSION,
+    debug=DEBUG
+)
+
+# CORS 미들웨어 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # 모든 오리진 허용으로 변경
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
     max_age=86400,  # 프리플라이트 요청 캐시 시간(초)
 )
 
-# CORS 프리플라이트 요청 처리를 위한 미들웨어
-@app.middleware("http")
-async def add_cors_headers(request: Request, call_next):
-    response = await call_next(request)
-    
-    # 요청 오리진 확인
-    origin = request.headers.get("origin", "")
-    
-    # 허용된 오리진이면 CORS 헤더 추가
-    if origin in origins:
-        response.headers["Access-Control-Allow-Origin"] = origin
-        response.headers["Access-Control-Allow-Credentials"] = "true"
-        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-        response.headers["Access-Control-Max-Age"] = "86400"
-    
-    return response
-
-# 프리플라이트 요청을 명시적으로 처리하는 엔드포인트
-@app.options("/api/question")
-async def options_api_question():
+# 프리플라이트 요청에 대한 전용 엔드포인트 (루트 레벨)
+@app.options("/{rest_of_path:path}")
+async def options_route(rest_of_path: str, request: Request):
     return JSONResponse(
         content={"message": "OK"},
         headers={
             "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
             "Access-Control-Max-Age": "86400",
         }
     )
@@ -139,8 +123,8 @@ async def answer_question(request: ChatRequest, db: Session = Depends(get_db)):
     # CORS 헤더 추가
     headers = {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Allow-Methods": "*",
+        "Access-Control-Allow-Headers": "*",
     }
     
     return JSONResponse(content=response.dict(), headers=headers)
