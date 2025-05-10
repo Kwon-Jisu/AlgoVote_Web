@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
     console.log(`질문 내용: "${question}"`);
 
     // 백엔드 서버가 콜드 스타트될 수 있으므로 먼저 헬스체크
+    // ESLint 경고 방지를 위해 error 변수 사용 안함
     try {
       console.log('백엔드 서버 상태 확인 중...');
       const healthCheck = await fetch(`${BACKEND_URL}/health`, { 
@@ -52,8 +53,7 @@ export async function POST(request: NextRequest) {
       } else {
         console.log('백엔드 서버 헬스체크 실패, 계속 진행합니다');
       }
-    } catch (_) {
-      // 헬스체크 오류는 무시하고 계속 진행
+    } catch {
       console.log('백엔드 서버 상태 확인 오류, 계속 진행합니다');
     }
 
