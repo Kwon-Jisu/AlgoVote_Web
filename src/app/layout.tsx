@@ -24,6 +24,9 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   title: '알고투표 - 정확한 정보를 바탕으로, 현명한 선택을',
   description: '알고투표는 객관적인 정보를 통해 유권자들이 편향 없이 후보자를 비교하고 현명한 선택을 할 수 있도록 돕는 플랫폼입니다.',
+  verification: {
+    google: 'snL0p51GqrQvKnaFxjpv19b8rvYDYYF66HBF5L9q61s',
+  },
   openGraph: {
     title: "알고투표",
     description: "알고투표는 객관적인 정보를 통해 유권자들이 편향 없이 후보자를 비교하고 현명한 선택을 할 수 있도록 돕는 플랫폼입니다.",
