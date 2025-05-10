@@ -22,10 +22,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://algovote.onrender.com/api/:path*',
+        destination: 'http://localhost:8000/api/:path*',
+        // destination: 'https://algovote.onrender.com/api/:path*',
       },
     ]
-  },
+  }
 };
 
 export default nextConfig;

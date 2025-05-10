@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// 백엔드 URL을 환경 변수로 설정 (기본값으로 Render 배포 URL 사용)
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://algovote.onrender.com';
+// 백엔드 URL을 환경 변수로 설정 (기본값으로 로컬 백엔드 URL 사용)
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
 
 // 타임아웃 설정을 위한 함수
 const fetchWithTimeout = async (url: string, options: RequestInit, timeout = 20000) => {
