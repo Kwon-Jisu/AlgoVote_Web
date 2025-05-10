@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { Inter, Roboto } from 'next/font/google'
 import Header from '@/components/layout/Header'
 import FooterWrapper from '@/components/layout/FooterWrapper';
+import Script from 'next/script';
 
 // Google Fonts를 next/font를 통해 로딩
 const inter = Inter({
@@ -56,6 +57,33 @@ export default function RootLayout({
     <html lang="ko" className={`${inter.variable} ${roboto.variable}`}>
       <head>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+         {/* Google Analytics */}
+         <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-KQHZX5Y0BN"
+          strategy="lazyOnload"
+        />
+        <Script id="ga4-analytics" strategy="lazyOnload">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-KQHZX5Y0BN');
+          `}
+        </Script>
+       {/* Hotjar */}
+       <Script id="hotjar-analytics" strategy="lazyOnload">
+          {`
+            (function(h,o,t,j,a,r){
+                h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+                h._hjSettings={hjid:6398749,hjsv:6};
+                a=o.getElementsByTagName('head')[0];
+                r=o.createElement('script');r.async=1;
+                r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+                a.appendChild(r);
+            })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+          `}
+        </Script>
       </head>
       <body className="flex flex-col min-h-screen font-sans">
         <Header />
