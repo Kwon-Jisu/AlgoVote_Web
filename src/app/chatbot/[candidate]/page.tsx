@@ -8,9 +8,16 @@ import { candidates } from "@/data/candidates";
 import { ChatMessage } from "@/types";
 
 // API 응답 타입 정의
+interface PolicyInfo {
+  id: number;
+  candidate_id: number;
+  title: string;
+  category: string;
+}
+
 interface ApiResponse {
   answer: string;
-  related_policies: any[];
+  related_policies: PolicyInfo[];
   source_metadata?: {
     page: number;
     source: string;
