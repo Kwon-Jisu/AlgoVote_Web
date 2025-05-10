@@ -60,6 +60,7 @@ export default function RootLayout({
     <html lang="ko" className={`${inter.variable} ${roboto.variable}`}>
       <head>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" />
+        <meta name="naver-site-verification" content="b05dd0da6b73ec650ac556e598e736a58bece17e" />
          {/* Google Analytics */}
          <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-KQHZX5Y0BN"
