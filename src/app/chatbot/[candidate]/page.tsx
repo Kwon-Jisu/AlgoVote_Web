@@ -9,6 +9,10 @@ import { ChatMessage } from "@/types";
 
 // RAG API 호출 함수
 async function fetchRagResponse(question: string, candidateInfo: string) {
+  // API 요청 타임아웃 설정 (45초)
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 45000);
+
   try {
     const response = await fetch(`/api/question`, {
       method: "POST",
@@ -20,7 +24,10 @@ async function fetchRagResponse(question: string, candidateInfo: string) {
         question: `${candidateInfo} ${question}`,
         match_count: 5,
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`API 응답 오류: ${response.status}`);
@@ -29,7 +36,14 @@ async function fetchRagResponse(question: string, candidateInfo: string) {
     const data = await response.json();
     return data.answer;
   } catch (error) {
+    clearTimeout(timeoutId);
     console.error("RAG API 호출 중 오류 발생:", error);
+    
+    // AbortError (타임아웃) 처리
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error('타임아웃: 요청 처리 시간이 초과되었습니다.');
+    }
+    
     throw error;
   }
 }
@@ -54,6 +68,8 @@ export default function ChatbotCandidatePage() {
   );
   const [isTyping, setIsTyping] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [retryCount, setRetryCount] = useState(0);
+  const [lastQuestion, setLastQuestion] = useState("");
 
   if (!selectedCandidate) {
     return (
@@ -73,17 +89,28 @@ export default function ChatbotCandidatePage() {
 
   const candidateInfo = `${selectedCandidate.name} 후보(${selectedCandidate.party})의 공약에 대해 답변합니다:`;
 
-  const handleSendMessage = async (content: string) => {
+  const handleRetrySend = () => {
+    if (lastQuestion) {
+      handleSendMessage(lastQuestion, true);
+    }
+  };
+
+  const handleSendMessage = async (content: string, isRetry = false) => {
     if (!selectedCandidate || !content.trim()) return;
     
-    const userMessage: ChatMessage = {
-      id: nanoid(),
-      role: "user",
-      content,
-      timestamp: new Date(),
-    };
+    // 재시도가 아닐 경우에만 새 메시지 추가
+    if (!isRetry) {
+      const userMessage: ChatMessage = {
+        id: nanoid(),
+        role: "user",
+        content,
+        timestamp: new Date(),
+      };
+      
+      setMessages((prev) => [...prev, userMessage]);
+      setLastQuestion(content);
+    }
     
-    setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
     setInputValue("");
     
@@ -114,17 +141,37 @@ export default function ChatbotCandidatePage() {
       };
       
       setMessages((prev) => [...prev, botMessage]);
+      // 성공 시 재시도 카운트 초기화
+      setRetryCount(0);
     } catch (error) {
-      // 오류 발생 시 오류 메시지 표시
-      const errorMessage: ChatMessage = {
+      let errorMessage = "죄송합니다. 답변을 생성하는 중에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.";
+      
+      // 타임아웃 오류 메시지 커스터마이징
+      if (error instanceof Error) {
+        if (error.message.includes('타임아웃')) {
+          errorMessage = "죄송합니다. 서버 응답 시간이 초과되었습니다. 서버가 혼잡하거나 휴면 상태에서 깨어나는 중일 수 있습니다. 아래 '다시 시도하기' 버튼을 클릭해주세요.";
+        } else if (error.message.includes('504')) {
+          errorMessage = "죄송합니다. 서버 게이트웨이 시간이 초과되었습니다. 서버가 현재 혼잡합니다. 잠시 후 다시 시도해주세요.";
+        } else if (error.message.includes('500')) {
+          errorMessage = "죄송합니다. 서버 내부 오류가 발생했습니다. 기술팀이 문제를 확인 중입니다. 잠시 후 다시 시도해주세요.";
+        }
+      }
+      
+      // 재시도 횟수 증가
+      setRetryCount(prev => prev + 1);
+      
+      // 오류 메시지에 재시도 버튼 추가 (3회 이내인 경우)
+      const showRetryButton = retryCount < 3;
+      
+      const botErrorMessage: ChatMessage = {
         id: nanoid(),
         role: "bot",
-        content: "죄송합니다. 답변을 생성하는 중에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
+        content: errorMessage + (showRetryButton ? "\n\n아래 '다시 시도하기' 버튼을 클릭하거나 다른 질문을 해보세요." : ""),
         timestamp: new Date(),
         candidateId: selectedCandidate.id,
       };
       
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, botErrorMessage]);
       console.error("답변 생성 중 오류:", error);
     } finally {
       setIsTyping(false);
@@ -222,6 +269,21 @@ export default function ChatbotCandidatePage() {
             </div>
           )}
         </div>
+        
+        {/* 재시도 버튼 영역 (오류 발생 시 표시) */}
+        {retryCount > 0 && retryCount < 4 && lastQuestion && (
+          <div className="flex justify-center mb-3">
+            <button
+              type="button"
+              className="bg-white text-[#3449FF] rounded-full px-6 py-2 text-base font-medium hover:bg-[#3449FF] hover:text-white transition-colors border border-[#3449FF]"
+              onClick={handleRetrySend}
+              disabled={isTyping}
+            >
+              다시 시도하기
+            </button>
+          </div>
+        )}
+        
         {/* 예시 질문 버튼 영역 */}
         <div className="flex justify-center">
           <div className="flex flex-wrap gap-2 mb-3 justify-center">
@@ -238,6 +300,7 @@ export default function ChatbotCandidatePage() {
             ))}
           </div>
         </div>
+        
         {/* 챗봇 주의사항 */}
         <div className="chat-status mb-2">
           <p className="text-xs text-[#6B7280] mt-1">
