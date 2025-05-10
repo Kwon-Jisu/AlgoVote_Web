@@ -5,6 +5,7 @@ import { Inter, Roboto } from 'next/font/google'
 import Header from '@/components/layout/Header'
 import FooterWrapper from '@/components/layout/FooterWrapper';
 import Script from 'next/script';
+import { Analytics } from "@vercel/analytics/next"
 
 // Google Fonts를 next/font를 통해 로딩
 const inter = Inter({
