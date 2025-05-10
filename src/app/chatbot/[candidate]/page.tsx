@@ -7,6 +7,17 @@ import { nanoid } from "nanoid";
 import { candidates } from "@/data/candidates";
 import { ChatMessage } from "@/types";
 
+// API 응답 타입 정의
+interface ApiResponse {
+  answer: string;
+  related_policies: any[];
+  source_metadata?: {
+    page: number;
+    source: string;
+    creation_date?: string;
+  };
+}
+
 // RAG API 호출 함수
 async function fetchRagResponse(question: string, candidateInfo: string) {
   // API 요청 타임아웃 설정 (45초)
@@ -33,8 +44,8 @@ async function fetchRagResponse(question: string, candidateInfo: string) {
       throw new Error(`API 응답 오류: ${response.status}`);
     }
 
-    const data = await response.json();
-    return data.answer;
+    const data: ApiResponse = await response.json();
+    return data;
   } catch (error) {
     clearTimeout(timeoutId);
     console.error("RAG API 호출 중 오류 발생:", error);
@@ -118,26 +129,38 @@ export default function ChatbotCandidatePage() {
       // RAG API 호출
       const response = await fetchRagResponse(content, candidateInfo);
       
-      // 출처 정보 추출 (마지막 줄이 출처인 경우를 가정)
-      let responseText = response;
-      let source = "";
+      // 적절한 출처 설명 생성
+      let sourceDescription = "2024 대선 공약집";
+      let sourceUrl = undefined;
       
-      const lines = response.split('\n');
-      const lastLine = lines[lines.length - 1].trim();
-      
-      if (lastLine.startsWith('출처:') || lastLine.includes('참고:')) {
-        responseText = lines.slice(0, -1).join('\n');
-        source = lastLine;
+      if (response.source_metadata) {
+        const { page, source } = response.source_metadata;
+        
+        // 파일명에서 확장자 제거
+        const sourceFileName = source.replace(/\.[^/.]+$/, "");
+        
+        // 페이지 번호가 있으면 출처에 포함
+        sourceDescription = page > 0
+          ? `${sourceFileName} 공약집 ${page}페이지`
+          : `${sourceFileName} 공약집`;
+        
+        // sourceUrl 는 나중에 실제 PDF 링크로 대체 가능
+        sourceUrl = undefined;
       }
       
       const botMessage: ChatMessage = {
         id: nanoid(),
         role: "bot",
-        content: responseText,
+        content: response.answer,
         timestamp: new Date(),
         candidateId: selectedCandidate.id,
-        sourceDescription: source || "2022 선거 공약집",
-        sourceUrl: source ? "https://example.com/policy" : undefined,
+        sourceDescription,
+        sourceUrl,
+        sourceMetadata: response.source_metadata ? {
+          page: response.source_metadata.page,
+          source: response.source_metadata.source,
+          creationDate: response.source_metadata.creation_date
+        } : undefined
       };
       
       setMessages((prev) => [...prev, botMessage]);
@@ -230,7 +253,8 @@ export default function ChatbotCandidatePage() {
                 <p className="whitespace-pre-line">{message.content}</p>
                 {message.role === "bot" && message.sourceDescription && (
                   <div className="mt-2 bg-white bg-opacity-50 p-2 rounded text-xs">
-                    <p className="text-[#6B7280]">
+                    <p className="text-[#6B7280] flex items-center">
+                      <span className="mr-1">📄</span>
                       출처: {message.sourceUrl ? (
                         <a
                           href={message.sourceUrl}
@@ -241,7 +265,12 @@ export default function ChatbotCandidatePage() {
                           {message.sourceDescription}
                         </a>
                       ) : (
-                        message.sourceDescription
+                        <span>{message.sourceDescription}</span>
+                      )}
+                      {message.sourceMetadata?.creationDate && (
+                        <span className="ml-1">
+                          ({new Date(message.sourceMetadata.creationDate).toLocaleDateString('ko-KR')})
+                        </span>
                       )}
                     </p>
                   </div>

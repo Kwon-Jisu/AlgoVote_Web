@@ -39,6 +39,8 @@ class Policy(Base):
     title = Column(String(255), nullable=False)
     category = Column(String(100))
     description = Column(Text)
+    metadata = Column(Text)  # JSON 문자열 형태로 저장되는 메타데이터
+    
     candidate = relationship("Candidate", back_populates="policies")
 
 # 데이터베이스 세션 가져오기

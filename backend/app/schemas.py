@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
 
 # 정책 스키마
@@ -6,6 +6,7 @@ class PolicyBase(BaseModel):
     title: str
     category: Optional[str] = None
     description: Optional[str] = None
+    metadata: Optional[str] = None  # JSON 문자열 형태의 메타데이터
 
 class PolicyCreate(PolicyBase):
     pass
@@ -34,6 +35,12 @@ class Candidate(CandidateBase):
     class Config:
         orm_mode = True
 
+# 출처 메타데이터 스키마
+class SourceMetadata(BaseModel):
+    page: int
+    source: str
+    creation_date: Optional[str] = None
+
 # AI 응답 스키마
 class ChatRequest(BaseModel):
     question: str
@@ -41,4 +48,5 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     answer: str
-    related_policies: Optional[List[Policy]] = None 
+    related_policies: Optional[List[Dict[str, Any]]] = None
+    source_metadata: Optional[SourceMetadata] = None 

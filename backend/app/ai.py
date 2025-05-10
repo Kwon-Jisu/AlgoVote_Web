@@ -1,12 +1,13 @@
 import os
 import asyncio
-from typing import List, Optional
+import json
+from typing import List, Optional, Dict, Any
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
 from .config import GEMINI_API_KEY
 from .database import Policy
-from .schemas import ChatResponse
+from .schemas import ChatResponse, SourceMetadata
 
 # Gemini API 키 설정
 if GEMINI_API_KEY:
@@ -45,33 +46,36 @@ generation_config = {
 # 프롬프트 템플릿
 SYSTEM_PROMPT = """알고투표 어시스턴트로서 정치적 중립성을 유지하며 한국 정치와 선거 공약에 관한 질문에 답변합니다.
 질문에 관련된 정확한 정보만 제공하고, 확실하지 않은 내용은 '정확한 정보가 없습니다'라고 답변하세요.
-답변은 간결하고 명확하게 작성하되, 중요한 사실은 모두 포함해야 합니다.
-답변 마지막에는 항상 '출처: 2024 대선 공약집' 형태로 출처를 표시하세요."""
+답변은 간결하고 명확하게 작성하되, 중요한 사실은 모두 포함해야 합니다."""
 
 async def get_ai_response(question: str, policies: Optional[List[Policy]] = None) -> ChatResponse:
-    """
-    질문에 대한 AI 응답을 생성하는 함수
-    
-    Args:
-        question: 사용자 질문
-        policies: 관련 정책 목록 (선택적)
-        
-    Returns:
-        ChatResponse: AI 응답 및 관련 정책
-    """
-    # API 키가 없는 경우
     if not GEMINI_API_KEY:
         return ChatResponse(
             answer="죄송합니다. API 키가 설정되지 않아 응답을 생성할 수 없습니다. 관리자에게 문의하세요.",
-            related_policies=[]
+            related_policies=[],
+            source_metadata=None
         )
     
-    # 관련 정책이 있는 경우 프롬프트에 추가
     policy_context = ""
     related_policies = []
-    
+    source_metadata = None
+
     if policies and len(policies) > 0:
         policy_context = "다음 정책들을 바탕으로 답변해주세요:\n\n"
+        
+        # 첫 번째 정책의 메타데이터를 기본 출처로 활용
+        first_policy = policies[0]
+        if hasattr(first_policy, 'metadata') and first_policy.metadata:
+            try:
+                metadata_dict = json.loads(first_policy.metadata)
+                source_metadata = SourceMetadata(
+                    page=metadata_dict.get("page", 0),
+                    source=metadata_dict.get("source", "공약집"),
+                    creation_date=metadata_dict.get("creationdate", "")
+                )
+            except (json.JSONDecodeError, AttributeError, KeyError) as e:
+                print(f"메타데이터 파싱 오류: {e}")
+        
         for policy in policies:
             policy_text = f"후보: {policy.candidate.name}, 제목: {policy.title}, 카테고리: {policy.category}, 내용: {policy.description}"
             policy_context += policy_text + "\n\n"
@@ -82,53 +86,56 @@ async def get_ai_response(question: str, policies: Optional[List[Policy]] = None
                 "category": policy.category
             })
     
-    # 최종 프롬프트 구성
     if policy_context:
         full_prompt = f"{SYSTEM_PROMPT}\n\n{policy_context}\n\n질문: {question}"
     else:
         full_prompt = f"{SYSTEM_PROMPT}\n\n질문: {question}"
-    
+
     try:
-        # Gemini Pro 모델 생성
         model = genai.GenerativeModel(
             model_name="gemini-1.5-pro",
             generation_config=generation_config,
             safety_settings=safety_settings
         )
-        
-        # 응답 생성
-        response = await asyncio.to_thread(
-            model.generate_content,
-            full_prompt
+
+        # ⏱️ Gemini 호출에 타임아웃 (30초 제한)
+        response = await asyncio.wait_for(
+            asyncio.to_thread(model.generate_content, full_prompt),
+            timeout=30
         )
-        
-        # 응답 텍스트 추출
+
         if response.candidates and len(response.candidates) > 0:
             answer_text = response.text
         else:
             answer_text = "죄송합니다. 질문에 대한 답변을 생성할 수 없습니다. 다른 질문을 시도해주세요."
-        
-        # 출처 정보가 없으면 추가
-        if "출처:" not in answer_text:
-            answer_text += "\n\n출처: 2024 대선 공약집"
-        
+
+        # 자동 출처 표시를 삭제하고 대신 SourceMetadata로 전달
+        if not source_metadata:
+            # 기본 출처 정보 설정
+            source_metadata = SourceMetadata(
+                page=0,
+                source="2024 대선 공약집",
+                creation_date=""
+            )
+
         return ChatResponse(
             answer=answer_text,
-            related_policies=related_policies
+            related_policies=related_policies,
+            source_metadata=source_metadata
         )
-        
+
+    except asyncio.TimeoutError:
+        print(f"AI 응답 생성 타임아웃 발생: 30초 초과")
+        return ChatResponse(
+            answer="죄송합니다. 답변 생성 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.",
+            related_policies=[],
+            source_metadata=None
+        )
+    
     except Exception as e:
         print(f"AI 응답 생성 중 오류 발생: {str(e)}")
-        
-        # 구체적인 오류 메시지 추가
-        error_message = str(e)
-        if "credentials" in error_message.lower():
-            return ChatResponse(
-                answer="죄송합니다. API 인증에 문제가 발생했습니다. 백엔드 서버의 API 키 설정을 확인해주세요.",
-                related_policies=[]
-            )
-        
         return ChatResponse(
             answer="죄송합니다. 서버 오류로 인해 답변을 생성할 수 없습니다. 잠시 후 다시 시도해주세요.",
-            related_policies=[]
-        ) 
+            related_policies=[],
+            source_metadata=None
+        )

@@ -48,6 +48,13 @@ export interface TeamMember {
   image?: string;
 }
 
+// 출처 메타데이터 타입
+export interface SourceMetadata {
+  page: number;
+  source: string;
+  creationDate?: string;
+}
+
 // 챗봇 관련 타입 정의
 export interface ChatMessage {
   id: string;
@@ -57,6 +64,7 @@ export interface ChatMessage {
   candidateId?: string; // 챗봇 메시지일 경우 어떤 후보의 메시지인지
   sourceUrl?: string; // 공약 출처 URL
   sourceDescription?: string; // 공약 출처 설명
+  sourceMetadata?: SourceMetadata; // 상세 출처 메타데이터
 }
 
 export interface SuggestedQuestion {
