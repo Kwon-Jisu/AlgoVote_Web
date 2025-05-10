@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { candidates, comparisonData, categoryDescriptions } from '@/data/candidates';
+import { candidates, comparisonData, categoryDescriptions, regionalPolicies } from '@/data/candidates';
 
 // 타입 정의
 type PolicyDetail = {
@@ -109,52 +109,6 @@ export default function Compare() {
       }
     ];
   }, [selectedCategory]);
-
-  // 지역별 공약 데이터
-  const regionalPromises = {
-    capital: [
-      {
-        candidate: '이재명',
-        policies: [
-          { icon: 'ri-train-line', text: 'GTX D노선 추가 및 GTX A·B·C 조기 완공' },
-          { icon: 'ri-hospital-line', text: '수도권 공공병원 10개소 추가 설립' },
-          { icon: 'ri-building-4-line', text: '수도권 주택 30만호 공급 계획 추진' },
-          { icon: 'ri-recycle-line', text: '수도권 미세먼지 저감 특별 대책 추진' },
-          { icon: 'ri-government-line', text: '경기도 행정수도 기능 일부 이전 검토' }
-        ]
-      },
-      {
-        candidate: '윤석열',
-        policies: [
-          { icon: 'ri-train-line', text: '수도권 광역철도망 확충 및 고속도로 확장' },
-          { icon: 'ri-building-line', text: '수도권 그린벨트 조정을 통한 주택 공급 확대' },
-          { icon: 'ri-community-line', text: '수도권 신도시 교통·교육·의료 인프라 확충' },
-          { icon: 'ri-building-2-line', text: '수도권 노후 아파트 재건축 규제 완화' },
-          { icon: 'ri-seedling-line', text: '수도권 환경 오염 저감 및 친환경 산업단지 조성' }
-        ]
-      },
-      {
-        candidate: '한덕수',
-        policies: [
-          { icon: 'ri-building-4-line', text: '수도권 공공임대주택 확대' },
-          { icon: 'ri-route-line', text: '수도권 대중교통 공공성 강화' },
-          { icon: 'ri-leaf-line', text: '수도권 녹지 30% 확대 계획' },
-          { icon: 'ri-government-line', text: '수도권-지방 상생 발전 모델 구축' },
-          { icon: 'ri-building-line', text: '수도권 과밀화 해소 및 계획적 분산' }
-        ]
-      },
-      {
-        candidate: '안철수',
-        policies: [
-          { icon: 'ri-global-line', text: '판교 제3테크노밸리 조성' },
-          { icon: 'ri-building-2-line', text: '수도권 첨단산업 클러스터 구축' },
-          { icon: 'ri-taxi-wifi-line', text: '수도권 스마트 교통망 확충' },
-          { icon: 'ri-home-8-line', text: '수도권 지역별 맞춤형 주택 공급' },
-          { icon: 'ri-plant-line', text: '수도권 미세먼지 저감 그린벨트 조성' }
-        ]
-      }
-    ]
-  };
 
   // categoryDescription에 있는 카테고리 키 배열
   const categoryKeys = Object.keys(categoryDescriptions) as Array<keyof typeof categoryDescriptions>;
@@ -264,7 +218,7 @@ export default function Compare() {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="p-4 text-left w-[15%]">정책 항목</th>
-                  {candidates.slice(0, 4).map(candidate => (
+                  {candidates.slice(0, 3).map(candidate => (
                     <th key={candidate.id} className="p-4 text-left w-[21.25%]">
                       <div className="flex items-center">
                         <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden mr-3">
@@ -337,7 +291,7 @@ export default function Compare() {
                 </tr>
               </thead>
               <tbody>
-                {candidates.slice(0, 4).map((candidate, cIdx) => (
+                {candidates.slice(0, 3).map((candidate, cIdx) => (
                   <tr key={candidate.id}>
                     <td className="p-4 border-t border-gray-200 align-top">
                       <div className="flex flex-col items-center">
@@ -428,9 +382,11 @@ export default function Compare() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {candidates.slice(0, 4).map((candidate, candidateIndex) => {
-              const regionalData = regionalPromises[selectedRegion as keyof typeof regionalPromises]?.[candidateIndex];
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {candidates.slice(0, 3).map((candidate) => {
+              const regionalData = regionalPolicies[selectedRegion as keyof typeof regionalPolicies]?.find(
+                data => data.candidateId === candidate.id
+              );
               return (
                 <div key={candidate.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
                   <div className="p-6 border-b border-gray-100">

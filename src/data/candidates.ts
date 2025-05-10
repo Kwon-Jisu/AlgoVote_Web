@@ -42,18 +42,6 @@ export const candidates: Candidate[] = [
     profileImage: '/images/candidates/lee-junseok.jpg',
     websiteUrl: 'https://www.candidate-website.kr',
   },
-  {
-    id: 'han-ducksoo',
-    name: '한덕수',
-    party: '무소속',
-    age: 63,
-    birthplace: '서울특별시',
-    education: ['한양대학교 사회학과 졸업'],
-    career: ['제20대 무소속 대선 후보', '전 무소속 대표', '제21대 국회의원'],
-    slogan: '불평등 해소와 정의로운 사회 실현',
-    profileImage: '/images/candidates/han-ducksoo.jpg',
-    websiteUrl: 'https://www.candidate-website.kr',
-  },
 ];
 
 /**
@@ -229,62 +217,6 @@ export const pledges: Pledge[] = [
     order: 3
   },
   
-  // 한덕수 후보 공약
-  {
-    id: 'han-ducksoo-pledge-1',
-    candidateId: 'han-ducksoo',
-    title: '경제민주화 강화 및 대기업 지배구조 개혁',
-    summary: '대기업 지배구조 개혁, 노동자 경영참여 확대, 사회적 경제 활성화',
-    category: '경제/산업',
-    background: '재벌 중심 경제구조로 인한 경제적 불평등 해소와 사회적 가치를 중시하는 경제 체제로의 전환을 통한 포용적 성장 달성',
-    content: [
-      '대기업 지배구조 개혁 및 경제력 집중 완화',
-      '노동자 경영참여 확대 및 이사회 노동자 대표 제도 도입',
-      '사회적 경제 활성화 및 협동조합, 사회적 기업 지원 확대',
-      '중소기업과 대기업 간 상생협력 강화 및 공정거래 질서 확립'
-    ],
-    implementation: '경제민주화기본법 제정, 공정거래법 개정, 사회적경제기본법 제정, 상생협력법 개정',
-    period: '취임 즉시 추진, 임기 내 단계적 확대',
-    funding: '공정경제 예산 확대, 사회적 경제 투자 기금 조성',
-    order: 1
-  },
-  {
-    id: 'han-ducksoo-pledge-2',
-    candidateId: 'han-ducksoo',
-    title: '보편적 복지 확대 및 사회안전망 강화',
-    summary: '보편적 복지 제도 확대, 국가책임 돌봄체계 구축, 기초연금 강화',
-    category: '복지',
-    background: '불평등 심화와 인구구조 변화에 대응하여 모든 국민이 기본적인 삶의 질을 보장받을 수 있는 보편적 복지체계 구축',
-    content: [
-      '국민기초생활보장제도 강화 및 보편적 복지 확대',
-      '국가책임 돌봄체계 구축 및 공공 돌봄 서비스 확대',
-      '기초연금 인상 및 노인 일자리 창출',
-      '아동수당 확대 및 아동 복지 서비스 강화'
-    ],
-    implementation: '사회보장기본법 개정, 국민기초생활보장법 개정, 기초연금법 개정, 아동복지법 개정',
-    period: '취임 후 1년 내 관련 법안 발의, 임기 내 단계적 확대',
-    funding: '복지 예산 확대(GDP 대비 10% 이상), 사회보험 재정 개혁, 조세제도 개편',
-    order: 2
-  },
-  {
-    id: 'han-ducksoo-pledge-3',
-    candidateId: 'han-ducksoo',
-    title: '기후위기 대응 및 그린뉴딜 강화',
-    summary: '그린뉴딜 강화, 탈원전 정책 추진, 환경정의 실현, 생태계 보전',
-    category: '환경',
-    background: '기후위기 대응과 지속가능한 발전을 위한 환경 정책 강화 및 에너지 전환 가속화',
-    content: [
-      '그린뉴딜 강화 및 탄소중립 달성을 위한 로드맵 구체화',
-      '탈원전 정책 추진 및 재생에너지 비중 확대',
-      '환경정의 실현을 위한 오염원인자 책임 강화',
-      '생태계 보전 및 생물다양성 증진 사업 확대'
-    ],
-    implementation: '기후위기대응법 제정, 에너지전환법 제정, 환경정의기본법 제정, 생태계보전법 개정',
-    period: '취임 즉시 추진, 2050년까지 단계적 달성',
-    funding: '그린뉴딜 예산 확대(5년간 100조원), 탄소세 도입, 환경 투자 펀드 조성',
-    order: 3
-  },
-  
   // 다른 후보들의 공약은 추가해야 함
   // 나머지 후보들의 공약을 각자 ID에 맞게 추가해주세요
 
@@ -382,63 +314,54 @@ export const comparisonData = {
     "lee-jaemyung": "디지털 경제 전환 가속화 · AI 산업 육성 · 중소기업 혁신 지원 · 공정경제 생태계 구축",
     "kim-moonsoo": "대기업 규제 완화 · 투자 활성화 · 세금 감면 · 기업 중심 경제 회복",
     "lee-junseok": "스타트업 생태계 육성 · 디지털 혁신 기업 지원 · 청년 창업 지원 · 미래산업 투자 확대",
-    "han-ducksoo": "대기업 지배구조 개혁 · 노동자 경영참여 · 사회적 경제 확대 · 재벌개혁과 경제민주화",
     "ahn-cheolsoo": "디지털 기술기반 경제 혁신 · 벤처기업 지원 확대 · R&D 투자 증가 · 규제 샌드박스 도입"
   },
   "행정": {
     "lee-jaemyung": "지방분권 강화 · 행정 디지털화 · 국민참여 정책플랫폼 구축 · 공직 윤리 강화",
     "kim-moonsoo": "정부조직 효율화 · 규제개혁 추진 · 공공기관 혁신 · 행정서비스 간소화",
     "lee-junseok": "디지털 행정혁신 · 스마트 정부 구현 · 행정 투명성 제고 · 국민 소통 강화",
-    "han-ducksoo": "지방자치 확대 · 주민참여 행정 · 행정정보 공개 확대 · 시민사회 협력 강화",
     "ahn-cheolsoo": "과학기술 기반 행정 혁신 · 데이터 기반 정책결정 · 행정절차 간소화 · 정부효율성 제고"
   },
   "복지": {
     "lee-jaemyung": "기본소득 도입 · 전국민 재난지원금 · 복지사각지대 해소 · 돌봄노동 공공화",
     "kim-moonsoo": "선별적 복지 확대 · 민간 참여 확대 · 자립형 복지체계 · 고령화 대비 연금개혁",
     "lee-junseok": "청년 기본소득 · 디지털 복지플랫폼 · 맞춤형 복지서비스 · 세대 간 형평성 제고",
-    "han-ducksoo": "보편적 복지 확대 · 국가책임 돌봄체계 · 아동수당 확대 · 기초연금 강화",
     "ahn-cheolsoo": "과학기술 기반 스마트 복지 · 예방중심 의료체계 · 맞춤형 사회안전망 · 삶의 질 향상"
   },
   "교육": {
     "lee-jaemyung": "교육 불평등 해소 · 공교육 강화 · 평생학습 체계 · 디지털 교육 확대",
     "kim-moonsoo": "교육 자율성 확대 · 경쟁력 강화 · 수월성 교육 · 입시제도 안정화",
     "lee-junseok": "AI 교육 혁신 · 디지털 리터러시 · 평생교육 체계 · 메타버스 교육 플랫폼",
-    "han-ducksoo": "무상교육 확대 · 대학서열화 해소 · 교육불평등 해소 · 민주시민교육 강화",
     "ahn-cheolsoo": "디지털 교육 혁명 · 창의융합 인재양성 · 글로벌 교육 경쟁력 강화 · 교사 전문성 강화"
   },
   "외교/안보": {
     "lee-jaemyung": "한미동맹 강화 · 남북 평화경제 · 균형외교 · 동북아 협력체계 구축",
     "kim-moonsoo": "한미일 안보협력 강화 · 북핵 강경대응 · 국방력 증강 · 자주국방 역량 강화",
     "lee-junseok": "실용적 대미외교 · 글로벌 디지털 협력 · 신흥 안보 대응 · 스마트 국방",
-    "han-ducksoo": "평화외교 · 남북대화 재개 · 동북아 평화체제 구축 · 평화적 핵문제 해결",
     "ahn-cheolsoo": "과학기술 외교 강화 · 사이버 안보 강화 · 실용적 대북정책 · 글로벌 협력 확대"
   },
   "환경": {
     "lee-jaemyung": "2050 탄소중립 추진 · 녹색일자리 창출 · 순환경제 활성화 · 신재생에너지 전환",
     "kim-moonsoo": "원전 확대 · 친환경 산업 육성 · 그린뉴딜 추진 · 미세먼지 저감",
     "lee-junseok": "스마트 그린시티 · 그린테크 산업 육성 · 신재생에너지 확대 · 디지털 탄소중립",
-    "han-ducksoo": "그린뉴딜 강화 · 탈원전 정책 · 환경정의 실현 · 생태계 보전 확대",
     "ahn-cheolsoo": "과학기술 활용 환경문제 해결 · 원전-신재생 조화 · 녹색기술 혁신 · 탄소중립 로드맵"
   },
   "주거/부동산": {
     "lee-jaemyung": "250만호 주택공급 · 공공임대 확대 · 부동산 투기 근절 · 1인 가구 주거 지원",
     "kim-moonsoo": "규제 완화로 주택공급 확대 · 재건축 활성화 · 세제 개편 · 민간 중심 주택시장",
     "lee-junseok": "청년 주택 공급 확대 · 스마트 주거서비스 · 세대별 맞춤형 주택정책 · 도심 재생",
-    "han-ducksoo": "주택공공성 강화 · 주택불평등 해소 · 토지공개념 도입 · 1가구 1주택 정책",
     "ahn-cheolsoo": "기술 기반 주택공급 혁신 · 스마트시티 개발 · 주거복지 향상 · 미래형 주택 보급"
   },
   "일자리": {
     "lee-jaemyung": "공공일자리 100만개 창출 · 디지털 일자리 육성 · 노동권 강화 · 일자리 안전망 확충",
     "kim-moonsoo": "기업 중심 일자리 창출 · 노동시장 유연화 · 소상공인 지원 · 신산업 육성",
     "lee-junseok": "청년 혁신 일자리 · 플랫폼 노동 보호 · 미래형 일자리 교육 · 세대상생형 고용",
-    "han-ducksoo": "노동시간 단축 · 양질의 공공일자리 · 정규직 전환 · 노동자 권리 보장",
     "ahn-cheolsoo": "디지털 혁신 일자리 · 벤처창업 생태계 · AI-인간 협업형 일자리 · 글로벌 인재 양성"
   },
   "보건/의료": {
     "lee-jaemyung": "공공의료 확대 · 감염병 대응체계 구축 · 건강보험 보장성 강화 · 의료격차 해소",
     "kim-moonsoo": "민간 의료 혁신 지원 · 디지털 헬스케어 육성 · 의료 효율성 제고 · 바이오산업 육성",
     "lee-junseok": "디지털 헬스케어 플랫폼 · AI 의료 서비스 · 의료 빅데이터 활용 · 미래 의료 혁신",
-    "han-ducksoo": "국가 책임 의료 · 의료 공공성 강화 · 의료불평등 해소 · 의약품 공공성 확대",
     "ahn-cheolsoo": "의사 출신의 전문성 · 디지털 의료 혁신 · 바이오 신약 개발 · 국가 의료체계 효율화"
   }
 };
@@ -467,6 +390,7 @@ export const regionalPolicies = {
   capital: [
     {
       candidateId: 'lee-jaemyung',
+      name: '이재명',
       policies: [
         { icon: 'ri-train-line', text: 'GTX D노선 추가 및 GTX A·B·C 조기 완공' },
         { icon: 'ri-hospital-line', text: '수도권 공공병원 10개소 추가 설립' },
@@ -477,6 +401,7 @@ export const regionalPolicies = {
     },
     {
       candidateId: 'kim-moonsoo',
+      name: '김문수',
       policies: [
         { icon: 'ri-train-line', text: '수도권 광역철도망 확충 및 고속도로 확장' },
         { icon: 'ri-building-line', text: '수도권 그린벨트 조정을 통한 주택 공급 확대' },
@@ -487,6 +412,7 @@ export const regionalPolicies = {
     },
     {
       candidateId: 'lee-junseok',
+      name: '이준석',
       policies: [
         { icon: 'ri-global-line', text: '수도권 지역 AI 클러스터 조성' },
         { icon: 'ri-building-2-line', text: '청년 주택 공급 확대 및 임대료 지원' },
@@ -495,20 +421,11 @@ export const regionalPolicies = {
         { icon: 'ri-plant-line', text: '도심 속 친환경 공간 확대' }
       ]
     },
-    {
-      candidateId: 'han-ducksoo',
-      policies: [
-        { icon: 'ri-building-4-line', text: '수도권 공공임대주택 확대' },
-        { icon: 'ri-route-line', text: '수도권 대중교통 공공성 강화' },
-        { icon: 'ri-leaf-line', text: '수도권 녹지 30% 확대 계획' },
-        { icon: 'ri-government-line', text: '수도권-지방 상생 발전 모델 구축' },
-        { icon: 'ri-building-line', text: '수도권 과밀화 해소 및 계획적 분산' }
-      ]
-    }
   ],
   chungcheong: [
     {
       candidateId: 'lee-jaemyung',
+      name: '이재명',
       policies: [
         { icon: 'ri-government-line', text: '행정수도 세종 완성 및 기능 강화' },
         { icon: 'ri-hub-line', text: '충청권 광역철도망 확충 및 KTX 노선 확대' },
@@ -519,6 +436,7 @@ export const regionalPolicies = {
     },
     {
       candidateId: 'kim-moonsoo',
+      name: '김문수',
       policies: [
         { icon: 'ri-government-line', text: '세종시 행정수도 기능 강화' },
         { icon: 'ri-building-line', text: '충청 지역 기업 유치 및 지원 확대' },
@@ -529,6 +447,7 @@ export const regionalPolicies = {
     },
     {
       candidateId: 'lee-junseok',
+      name: '이준석',
       policies: [
         { icon: 'ri-building-4-line', text: '청년 창업 특구 조성 및 스타트업 지원' },
         { icon: 'ri-global-line', text: 'IT 기반 첨단산업 클러스터 조성' },
@@ -536,21 +455,12 @@ export const regionalPolicies = {
         { icon: 'ri-city-line', text: '첨단 스마트시티 시범단지 조성' },
         { icon: 'ri-award-line', text: '지역 대학 특성화 및 산학협력 강화' }
       ]
-    },
-    {
-      candidateId: 'han-ducksoo',
-      policies: [
-        { icon: 'ri-government-line', text: '행정수도 완성 및 공공기관 추가 이전' },
-        { icon: 'ri-hospital-line', text: '충청 지역 공공의료 인프라 확충' },
-        { icon: 'ri-community-line', text: '농촌 공동체 활성화 및 지원 강화' },
-        { icon: 'ri-recycle-line', text: '친환경 농업 육성 및 로컬푸드 확대' },
-        { icon: 'ri-bus-line', text: '교통 소외지역 대중교통 확대' }
-      ]
     }
   ],
   yeongnam: [
     {
       candidateId: 'lee-jaemyung',
+      name: '이재명',
       policies: [
         { icon: 'ri-building-line', text: '부·울·경 메가시티 추진 및 지원' },
         { icon: 'ri-hub-line', text: '영남 지역 KTX·SRT 확대 및 고속도로망 확충' },
@@ -561,6 +471,7 @@ export const regionalPolicies = {
     },
     {
       candidateId: 'kim-moonsoo',
+      name: '김문수',
       policies: [
         { icon: 'ri-building-4-line', text: '영남권 경제 활성화 특별 지원' },
         { icon: 'ri-ship-line', text: '부산항 인프라 확충 및 글로벌 물류 허브 육성' },
@@ -571,22 +482,13 @@ export const regionalPolicies = {
     },
     {
       candidateId: 'lee-junseok',
+      name: '이준석',
       policies: [
         { icon: 'ri-city-line', text: '부·울·경 디지털 혁신 도시 조성' },
         { icon: 'ri-global-line', text: '대구·경북 AI·로봇 산업 클러스터 구축' },
         { icon: 'ri-building-line', text: '청년 창업 지원 및 혁신 산업 육성' },
         { icon: 'ri-ship-line', text: '해양도시 스마트화 및 친환경 항만 구축' },
         { icon: 'ri-train-line', text: '영남권 광역철도망 구축 및 교통망 확충' }
-      ]
-    },
-    {
-      candidateId: 'han-ducksoo',
-      policies: [
-        { icon: 'ri-building-line', text: '노후 산업단지 재생 및 친환경화' },
-        { icon: 'ri-hospital-line', text: '지방 의료 격차 해소 및 의료 인프라 확충' },
-        { icon: 'ri-community-line', text: '지역 균형 발전 및 공공기관 추가 이전' },
-        { icon: 'ri-recycle-line', text: '낙동강 수질 개선 및 생태계 보전' },
-        { icon: 'ri-government-line', text: '지방분권 강화 및 지역 자치권 확대' }
       ]
     }
   ]
