@@ -52,7 +52,8 @@ export async function POST(request: NextRequest) {
       } else {
         console.log('백엔드 서버 헬스체크 실패, 계속 진행합니다');
       }
-    } catch (healthCheckError) {
+    } catch (_) {
+      // 헬스체크 오류는 무시하고 계속 진행
       console.log('백엔드 서버 상태 확인 오류, 계속 진행합니다');
     }
 
