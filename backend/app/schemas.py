@@ -6,7 +6,7 @@ class PolicyBase(BaseModel):
     title: str
     category: Optional[str] = None
     description: Optional[str] = None
-    metadata: Optional[str] = None  # JSON 문자열 형태의 메타데이터
+    meta_info: Optional[str] = None  # JSON 문자열 형태의 메타데이터
 
 class PolicyCreate(PolicyBase):
     pass

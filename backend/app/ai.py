@@ -65,9 +65,9 @@ async def get_ai_response(question: str, policies: Optional[List[Policy]] = None
         
         # 첫 번째 정책의 메타데이터를 기본 출처로 활용
         first_policy = policies[0]
-        if hasattr(first_policy, 'metadata') and first_policy.metadata:
+        if hasattr(first_policy, 'meta_info') and first_policy.meta_info:
             try:
-                metadata_dict = json.loads(first_policy.metadata)
+                metadata_dict = json.loads(first_policy.meta_info)
                 source_metadata = SourceMetadata(
                     page=metadata_dict.get("page", 0),
                     source=metadata_dict.get("source", "공약집"),
