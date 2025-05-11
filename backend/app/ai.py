@@ -93,7 +93,7 @@ async def get_ai_response(question: str, policies: Optional[List[Policy]] = None
 
     try:
         model = genai.GenerativeModel(
-            model_name="gemini-1.5-pro",
+            model_name="gemini-2.0-flash",
             generation_config=generation_config,
             safety_settings=safety_settings
         )
