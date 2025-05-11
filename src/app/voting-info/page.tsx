@@ -14,10 +14,10 @@ export default function VotingInfo() {
             투표일 안내
           </h2>
           <div className="bg-primary bg-opacity-5 p-4 rounded-lg mb-4">
-            <p className="text-lg font-medium text-center">2025년 6월 3일 (화) 오전 6시 ~ 오후 8시</p>
+            <p className="text-lg font-medium text-center">2025년 6월 3일 (화) 06시 ~ 20시</p>
           </div>
           <p className="text-text-secondary mb-2">※ 투표소는 오후 8시에 정확히 마감됩니다. 마감 시간 전에 투표소에 도착하여 대기하고 있더라도 투표를 할 수 없으니 이 점 유의하시기 바랍니다.</p>
-          <p className="text-text-secondary">※ 사전투표: 2025년 5월 10일 (토) ~ 5월 11일 (일) 오전 6시 ~ 오후 8시</p>
+          <p className="text-text-secondary">※ 사전투표: 2025년 5월 29일 (목) ~ 5월 30일 (금) 06시 ~ 18시</p>
         </section>
         
         {/* 투표 자격 섹션 */}
@@ -30,7 +30,7 @@ export default function VotingInfo() {
             <h3 className="text-xl font-medium mb-2">투표일 기준</h3>
             <ul className="list-disc pl-5 text-text-secondary space-y-1">
               <li>대한민국 국민</li>
-              <li>만 18세 이상</li>
+              <li>만 18세 이상(※ 선거일 기준)</li>
               <li>선거인명부에 등재된 사람</li>
             </ul>
           </div>
@@ -49,7 +49,7 @@ export default function VotingInfo() {
             <i className="ri-map-pin-line text-primary mr-2"></i>
             투표소 찾기
           </h2>
-          <p className="text-text-secondary mb-4">본인의 주민등록주소에 따른 투표소 위치를 확인하세요.</p>
+          <p className="text-text-secondary mb-4">내 주민등록지 기준 투표소를 확인하세요.</p>
           <div className="text-center">
             <a 
               href="https://www.nec.go.kr" 
@@ -86,7 +86,7 @@ export default function VotingInfo() {
                 </div>
               </div>
               <h3 className="text-lg font-medium text-center mb-2">투표용지 수령</h3>
-              <p className="text-text-secondary text-center">선거인명부에 서명한 후 투표용지를 받습니다.</p>
+              <p className="text-text-secondary text-center">선거인명부에 서명 후 투표용지를 받습니다.</p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
               <div className="text-center mb-3">
@@ -140,7 +140,7 @@ export default function VotingInfo() {
             <i className="ri-video-line text-primary mr-2"></i>
             투표 안내 영상
           </h2>
-          <p className="text-text-secondary mb-4">투표 절차와 유의사항에 대한 상세 안내 영상입니다.</p>
+          <p className="text-text-secondary mb-4">투표 절차와 유의사항에 대한 안내 영상입니다.</p>
           <div className="max-w-5xl mx-auto">
             <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
               <iframe 
