@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#3449FF", // 메인 컬러
+        primary: "#3C00FF", // 메인 컬러
         background: "#F5F7FA", // 배경 컬러
         "text-primary": "#1E1E1E", // 기본 텍스트
         "text-secondary": "#6B7280", // 보조 텍스트
