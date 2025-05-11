@@ -43,7 +43,7 @@ export default function Home() {
                       <i className="ri-information-line"></i>
                     </div>
                     <span className="absolute right-0 top-full w-72 p-3 bg-white shadow-lg rounded-lg border border-divider text-xs text-text-secondary z-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                      본 서비스는 다음 기관의 공식 자료를 기반으로 데이터 수집 및 가공되었습니다. 클릭시 데이터 수집 로그가 표시됩니다.
+                      본 서비스는 다음 기관의 공식 자료를 기반으로 데이터 수집 및 가공되었습니다. 클릭시 데이터 수집 현황이 표시됩니다.
                     </span>
                   </div>
             </div>
@@ -60,7 +60,7 @@ export default function Home() {
       {/* 주요 후보자 섹션 */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
-          <div className="flex items-start justify-center mb-4">
+          <div className="flex items-start justify-center">
             <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold text-text-primary mb-10 text-center whitespace-nowrap">제 21대 대통령 선거 주요 후보자</h2>
             <div className="relative group">
                 <div className="w-6 h-6 flex items-center justify-center text-text-secondary cursor-help">
@@ -70,6 +70,10 @@ export default function Home() {
                   알고투표는 유권자들의 정보 접근성을 높이기 위해, 주요 후보들을 중심으로 정보를 제공하고 있습니다.
                 </span>
             </div>
+          </div>
+          {/* 모바일에서만 보이는 안내 메시지 */}
+          <div className="md:hidden p-4 mb-4 text-center text-text-secondary">
+            클릭시 각 후보자별 세부공약을 확인 할 수 있습니다.
           </div>
           <div className="grid grid-cols-3 md:grid-cols-3 gap-6 md:gap-8">
             {mainCandidates.map((candidate) => (
