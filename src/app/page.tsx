@@ -60,7 +60,7 @@ export default function Home() {
       {/* 주요 후보자 섹션 */}
       <section className="py-12 sm:py-16 md:py-20  px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
-          <div className="flex items-start justify-center  mb-0 sm:mb-10">
+          <div className="flex items-start justify-center mb-0 sm:mb-10">
             <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold text-text-primarytext-center whitespace-nowrap">제 21대 대통령 선거 주요 후보자</h2>
             <div className="relative group">
                 <div className="w-6 h-6 flex items-center justify-center text-text-secondary cursor-help">
@@ -72,7 +72,7 @@ export default function Home() {
             </div>
           </div>
           {/* 모바일에서만 보이는 안내 메시지 */}
-          <div className="md:hidden p-4 mb-4 text-center text-text-secondary">
+          <div className="md:hidden p-4 mb-2 text-center text-text-secondary text-sm">
             클릭시 각 후보자별 세부공약을 확인 할 수 있습니다.
           </div>
           <div className="grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-8">
