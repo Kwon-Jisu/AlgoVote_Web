@@ -11,7 +11,7 @@ export default function Header() {
               알고투표
             </Link>
           </div>
-          <nav className="flex space-x-8">
+          <nav className="flex space-x-6 md:space-x-8">
             <Link 
               href="/compare" 
               className="text-text-primary hover:text-primary transition-colors duration-200 font-medium"
