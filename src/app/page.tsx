@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <div className="bg-white min-h-screen">
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background">
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-background">
         <div className="container mx-auto max-w-4xl text-center fade-in">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-text-primary mb-6 whitespace-nowrap">정확한 정보를 바탕으로, 현명한 선택을</h1>
           <p className="text-base sm:text-xl text-text-secondary max-w-2xl mx-auto mb-8">
@@ -58,10 +58,10 @@ export default function Home() {
       </section>
 
       {/* 주요 후보자 섹션 */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 sm:py-16 md:py-20  px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
-          <div className="flex items-start justify-center">
-            <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold text-text-primary mb-10 text-center whitespace-nowrap">제 21대 대통령 선거 주요 후보자</h2>
+          <div className="flex items-start justify-center  mb-0 sm:mb-10">
+            <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold text-text-primarytext-center whitespace-nowrap">제 21대 대통령 선거 주요 후보자</h2>
             <div className="relative group">
                 <div className="w-6 h-6 flex items-center justify-center text-text-secondary cursor-help">
                   <i className="ri-information-line"></i>
@@ -75,7 +75,7 @@ export default function Home() {
           <div className="md:hidden p-4 mb-4 text-center text-text-secondary">
             클릭시 각 후보자별 세부공약을 확인 할 수 있습니다.
           </div>
-          <div className="grid grid-cols-3 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-8">
             {mainCandidates.map((candidate) => (
               <div key={candidate.id}>
                 <CandidateCard candidate={candidate} />
@@ -92,7 +92,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-background">
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-background">
         <div className="container mx-auto max-w-5xl">
           <h2 className="text-2xl sm:text-3xl font-bold text-text-primary mb-12 text-center">알고투표의 특징</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -128,7 +128,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto max-w-4xl bg-primary bg-opacity-5 rounded-2xl p-8 sm:p-12">
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-bold text-text-primary mb-4">투표일 안내</h2>
