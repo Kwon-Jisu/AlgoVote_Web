@@ -38,7 +38,7 @@ export default function Home() {
                       className="w-[150px] h-auto sm:w-[150px] md:w-[200px] object-contain"
                     />
                   </div>
-                  <div className="relative group">
+                  <div className="relative group mb-2">
                     <div className="w-6 h-6 flex items-center justify-center text-text-secondary cursor-help">
                       <i className="ri-information-line"></i>
                     </div>
