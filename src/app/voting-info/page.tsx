@@ -163,7 +163,7 @@ export default function VotingInfo() {
         
         {/* 정보 출처 */}
         <div className="text-center text-xs text-text-secondary mt-8 mb-10">
-          정보 출처: <a href="https://www.nec.go.kr" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">중앙선거관리위원회</a>, 2025.04.27 기준
+          정보 출처: <a href="https://www.nec.go.kr/site/vt/ex/bbs/View.do?cbIdx=1614&bcIdx=270573&relCbIdx=1129" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">중앙선거관리위원회</a>, 2025.05.12 기준
         </div>
       </main>
     </div>
