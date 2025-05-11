@@ -12,7 +12,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background">
         <div className="container mx-auto max-w-4xl text-center fade-in">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-text-primary mb-6">정확한 정보를 바탕으로, 현명한 선택을</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-text-primary mb-6 whitespace-nowrap">정확한 정보를 바탕으로, 현명한 선택을</h1>
           <p className="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-8">
             더 나은 선택은 객관적인 정보 비교에서 시작됩니다.<br></br>
             알고투표는 유권자가 정책과 비전을 쉽게 비교하고 현명한 결정을 내릴 수 있도록 돕는 플랫폼입니다.
@@ -29,7 +29,7 @@ export default function Home() {
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
           <div className="flex items-start justify-center mb-4">
-            <h2 className="text-3xl font-bold text-text-primary mb-10 text-center">제21대 대통령 선거 주요 후보자</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold text-text-primary mb-10 text-center whitespace-nowrap">제 21대 대통령 선거 주요 후보자</h2>
             <div className="relative group">
                 <div className="w-6 h-6 flex items-center justify-center text-text-secondary cursor-help">
                   <i className="ri-information-line"></i>
@@ -39,7 +39,7 @@ export default function Home() {
                 </span>
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-3 md:grid-cols-3 gap-6 md:gap-8">
             {mainCandidates.map((candidate) => (
               <div key={candidate.id}>
                 <CandidateCard candidate={candidate} />
@@ -93,7 +93,7 @@ export default function Home() {
         <div className="container mx-auto max-w-4xl bg-primary bg-opacity-5 rounded-2xl p-8 sm:p-12">
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-bold text-text-primary mb-4">투표일 안내</h2>
-            <p className="text-lg text-text-secondary mb-8">2025년 6월 3일 (화) 오전 6시 ~ 오후 8시</p>
+            <p className="text-sm sm:text-base md:text-lg text-text-secondary mb-8 whitespace-nowrap">2025년 6월 3일 (화) 오전 6시 ~ 오후 8시</p>
             <Link href="/voting-info" className="btn-primary inline-block whitespace-nowrap">
               투표 방법 알아보기
             </Link>
