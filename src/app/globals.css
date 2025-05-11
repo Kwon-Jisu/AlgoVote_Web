@@ -51,6 +51,49 @@ body {
   }
 }
 
+/* 스크롤 스냅 관련 스타일 */
+.snap-x {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.snap-center {
+  scroll-snap-align: center;
+}
+
+/* 커스텀 스크롤바 숨기기 */
+.snap-x::-webkit-scrollbar {
+  display: none;
+}
+
+.snap-x {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* 페이드 슬라이드 효과 */
+.slide-fade-enter {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.slide-fade-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.slide-fade-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slide-fade-exit-active {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }

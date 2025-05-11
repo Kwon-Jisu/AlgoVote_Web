@@ -1,117 +1,133 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { candidates, comparisonData, categoryDescriptions, regionalPolicies } from '@/data/candidates';
-
-// 타입 정의
-type PolicyDetail = {
-  candidate: string;
-  candidateId: string;
-  summary: string;
-  details: string[];
-  source: string;
-};
-
-type PolicyItem = {
-  id: string;
-  title: string;
-  policies: PolicyDetail[];
-};
-
-// 카테고리 데이터에 대한 타입 정의
-type CategoryData = Record<string, string>;
+import { candidates, categoryDescriptions, regionalPolicies, pledges } from '@/data/candidates';
 
 export default function Compare() {
-  const [viewType, setViewType] = React.useState<'category' | 'region'>('category');
-  const [selectedCategory, setSelectedCategory] = React.useState<keyof typeof comparisonData>('경제');
-  const [selectedRegion, setSelectedRegion] = React.useState('capital');
-  const [expandedItems, setExpandedItems] = React.useState<Record<string, boolean>>({});
+  const [viewType, setViewType] = useState<'category' | 'region'>('category');
+  const [selectedCategory, setSelectedCategory] = useState<string>('경제');
+  const [selectedRegion, setSelectedRegion] = useState('capital');
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  // 카테고리별 정책 항목 준비
+  const policyItems = React.useMemo(() => {
+    // 선택된 카테고리에 해당하는 모든 정책 가져오기
+    const filteredPledges = pledges.filter(pledge => 
+      pledge.category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
+      selectedCategory.toLowerCase().includes(pledge.category.toLowerCase().split('/')[0])
+    );
+    
+    // 정책 항목들을 제목 기준으로 그룹화
+    const uniqueTitles = [...new Set(filteredPledges.map(p => p.title))];
+    
+    return uniqueTitles.map(title => {
+      const relatedPledges = filteredPledges.filter(p => p.title === title);
+      
+      return {
+        id: title.toLowerCase().replace(/\s+/g, '-'),
+        title: title,
+        policies: relatedPledges.map(pledge => ({
+          candidate: candidates.find(c => c.id === pledge.candidateId)?.name || '',
+          candidateId: pledge.candidateId,
+          summary: pledge.summary,
+          details: pledge.content,
+          source: '후보 공식 정책집'
+        }))
+      };
+    });
+  }, [selectedCategory]);
 
   const handleViewTypeChange = (type: 'category' | 'region') => {
     setViewType(type);
   };
 
-  const toggleItemExpand = (itemId: string) => {
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setActiveSlideIndex(0); // 카테고리 변경 시 첫 번째 슬라이드로 초기화
+  };
+
+  const toggleItemExpand = (candidateId: string, policyId: string) => {
+    const key = `${candidateId}-${policyId}`;
     setExpandedItems(prev => ({
       ...prev,
-      [itemId]: !prev[itemId]
+      [key]: !prev[key]
     }));
   };
 
-  // 초기화 함수 추가
-  React.useEffect(() => {
-    const toggleContents = document.querySelectorAll('.toggle-content');
-    toggleContents.forEach(content => {
-      (content as HTMLElement).style.display = 'none';
-    });
-    
-    // 토글 버튼 이벤트 리스너 추가
-    const handleToggleClick = (e: Event) => {
-      const button = e.currentTarget as HTMLElement;
-      const content = button.nextElementSibling as HTMLElement;
-      
-      if (content && content.classList.contains('toggle-content')) {
-        const span = button.querySelector('span');
-        const icon = button.querySelector('i');
-        
-        if (content.style.display === 'block') {
-          content.style.display = 'none';
-          if (span) span.textContent = '더 보기';
-          if (icon) icon.className = 'ri-arrow-down-s-line';
-        } else {
-          content.style.display = 'block';
-          if (span) span.textContent = '접기';
-          if (icon) icon.className = 'ri-arrow-up-s-line';
+  // 슬라이드 변경 처리
+  const handleSlideChange = (index: number) => {
+    setActiveSlideIndex(index);
+    if (sliderRef.current) {
+      sliderRef.current.scrollTo({
+        left: index * window.innerWidth,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // 스와이프 처리를 위한 터치 이벤트 관리
+  useEffect(() => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+
+    let startX: number;
+    let currentX: number;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      currentX = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+      const diff = startX - currentX;
+      const threshold = 100; // 스와이프 임계값
+
+      if (Math.abs(diff) > threshold) {
+        if (diff > 0 && activeSlideIndex < policyItems.length - 1) {
+          // 왼쪽으로 스와이프
+          handleSlideChange(activeSlideIndex + 1);
+        } else if (diff < 0 && activeSlideIndex > 0) {
+          // 오른쪽으로 스와이프
+          handleSlideChange(activeSlideIndex - 1);
         }
       }
     };
-    
-    const toggleButtons = document.querySelectorAll('.toggle-btn');
-    toggleButtons.forEach(button => {
-      button.addEventListener('click', handleToggleClick);
-    });
-    
-    return () => {
-      toggleButtons.forEach(button => {
-        button.removeEventListener('click', handleToggleClick);
-      });
-    };
-  }, [viewType, selectedCategory]); // 뷰 타입이나 카테고리가 변경될 때마다 재실행
 
-  // comparisonData에서 정책 아이템 생성
-  const policyItems = React.useMemo((): PolicyItem[] => {
-    // 선택된 카테고리에 해당하는 데이터만 필터링
-    if (!comparisonData[selectedCategory]) return [];
-
-    // 타입 캐스팅을 명시적으로 수행
-    const categoryData = comparisonData[selectedCategory] as CategoryData;
-    
-    // 정책 항목 생성
-    return [
-      {
-        id: `${selectedCategory.toLowerCase()}-policy`,
-        title: selectedCategory,
-        policies: candidates.map(candidate => {
-          const candidateId = candidate.id;
-          // candidateId가 string이므로 인덱싱 가능
-          const policyDetails = categoryData[candidateId]?.split(' · ') || [];
-          
-          return {
-            candidate: candidate.name,
-            candidateId,
-            summary: categoryData[candidateId] || '-',
-            details: policyDetails,
-            source: '후보 공식 정책집 (PDF)'
-          };
-        }).filter(policy => policy.summary !== '-') // 정책이 없는 후보는 제외
+    // 스크롤 스냅 처리
+    const handleScroll = () => {
+      if (!slider) return;
+      
+      const scrollPosition = slider.scrollLeft;
+      const slideWidth = window.innerWidth;
+      const newIndex = Math.round(scrollPosition / slideWidth);
+      
+      if (newIndex !== activeSlideIndex) {
+        setActiveSlideIndex(newIndex);
       }
-    ];
-  }, [selectedCategory]);
+    };
 
-  // categoryDescription에 있는 카테고리 키 배열
-  const categoryKeys = Object.keys(categoryDescriptions) as Array<keyof typeof categoryDescriptions>;
+    slider.addEventListener('touchstart', handleTouchStart);
+    slider.addEventListener('touchmove', handleTouchMove);
+    slider.addEventListener('touchend', handleTouchEnd);
+    slider.addEventListener('scroll', handleScroll);
+
+    return () => {
+      slider.removeEventListener('touchstart', handleTouchStart);
+      slider.removeEventListener('touchmove', handleTouchMove);
+      slider.removeEventListener('touchend', handleTouchEnd);
+      slider.removeEventListener('scroll', handleScroll);
+    };
+  }, [activeSlideIndex, policyItems.length]);
+
+  // 카테고리 키 배열
+  const categoryKeys = Object.keys(categoryDescriptions);
 
   return (
     <div className="bg-background min-h-screen">
@@ -179,6 +195,7 @@ export default function Compare() {
 
         {/* 정책 카테고리별 보기 섹션 */}
         <section id="category-section" className={`mb-8 ${viewType === 'category' ? 'block' : 'hidden'}`}>
+          {/* 카테고리 선택 탭 */}
           <div className="overflow-x-auto whitespace-nowrap pb-4 mb-6">
             <div className="flex space-x-3">
               {categoryKeys.map((category) => (
@@ -189,7 +206,7 @@ export default function Compare() {
                     name="category" 
                     className="absolute opacity-0 w-0 h-0"
                     checked={selectedCategory === category}
-                    onChange={() => setSelectedCategory(category)}
+                    onChange={() => handleCategoryChange(category)}
                   />
                   <label
                     htmlFor={category}
@@ -206,148 +223,177 @@ export default function Compare() {
             </div>
           </div>
 
-          {selectedCategory && categoryDescriptions[selectedCategory] && (
-            <div className="mb-6 text-text-secondary">
-              <p>{categoryDescriptions[selectedCategory]}</p>
-            </div>
-          )}
-
-          {/* 데스크탑: 기존 테이블 */}
-          <div className="hidden md:block overflow-x-auto">
-            <table className="w-full min-w-[768px]">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="p-4 text-left w-[15%]">정책 항목</th>
-                  {candidates.slice(0, 3).map(candidate => (
-                    <th key={candidate.id} className="p-4 text-left w-[21.25%]">
-                      <div className="flex items-center">
-                        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden mr-3">
-                          {candidate.profileImage && (
-                            <Image 
-                              src={candidate.profileImage} 
-                              alt={candidate.name}
-                              width={48}
-                              height={48}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                        </div>
-                        <span className="font-bold text-lg">{candidate.name}</span>
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {policyItems.map((item) => (
-                  <tr key={item.id}>
-                    <td className="p-4 border-t border-gray-200 align-top">
-                      <div className="font-medium">{item.title}</div>
-                    </td>
-                    {item.policies.map((policy, index) => (
-                      <td key={index} className="p-4 border-t border-gray-200">
-                        <div className="bg-white rounded-lg shadow-sm p-4">
-                          <p>{policy.summary}</p>
-                          <div className="mt-2">
-                            <button
-                              className="flex items-center text-sm text-primary"
-                              onClick={() => toggleItemExpand(`${item.id}-${index}`)}
-                            >
-                              <span>{expandedItems[`${item.id}-${index}`] ? '접기' : '더 보기'}</span>
-                              <div className="w-5 h-5 flex items-center justify-center ml-1">
-                                <i className={expandedItems[`${item.id}-${index}`] ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'}></i>
-                              </div>
-                            </button>
-                            <div className={`mt-2 text-sm text-gray-600 ${expandedItems[`${item.id}-${index}`] ? 'block' : 'hidden'}`}> 
-                              {policy.details && policy.details.map((detail: string, detailIndex: number) => (
-                                <p key={detailIndex}>- {detail}</p>
-                              ))}
-                              <div className="mt-2 text-xs text-gray-500">
-                                출처:
-                                <span className="text-primary underline ml-1">{policy.source}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* 선택된 카테고리 설명 */}
+          <div className="mb-6 text-text-secondary">
+            <p>{categoryDescriptions[selectedCategory as keyof typeof categoryDescriptions]}</p>
           </div>
 
-          {/* 모바일: 정책항목 x축, 후보자 y축 */}
-          <div className="block md:hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th className="p-4 text-left w-[20%]">정책항목</th>
-                  {policyItems.map((item) => (
-                    <th key={item.id} className="p-4 text-left">
-                      <div className="font-medium">{item.title}</div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {candidates.slice(0, 3).map((candidate, cIdx) => (
-                  <tr key={candidate.id}>
-                    <td className="p-4 border-t border-gray-200 align-top">
-                      <div className="flex flex-col items-center">
-                        <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden mb-2">
-                          {candidate.profileImage && (
-                            <Image 
-                              src={candidate.profileImage} 
-                              alt={candidate.name}
-                              width={40}
-                              height={40}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                        </div>
-                        <span className="font-bold text-base text-center">{candidate.name}</span>
-                      </div>
-                    </td>
-                    {policyItems.map((item) => {
-                      const candidatePolicy = item.policies.find(p => p.candidate === candidate.name);
-                      return (
-                        <td key={item.id} className="p-4 border-t border-gray-200">
-                          <div className="bg-white rounded-lg shadow-sm p-4">
-                            <p>{candidatePolicy?.summary || '-'}</p>
-                            {candidatePolicy && (
-                              <div className="mt-2">
-                                <button
-                                  className="flex items-center text-sm text-primary"
-                                  onClick={() => toggleItemExpand(`${item.id}-mobile-${cIdx}`)}
-                                >
-                                  <span>{expandedItems[`${item.id}-mobile-${cIdx}`] ? '접기' : '더 보기'}</span>
-                                  <div className="w-5 h-5 flex items-center justify-center ml-1">
-                                    <i className={expandedItems[`${item.id}-mobile-${cIdx}`] ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'}></i>
-                                  </div>
-                                </button>
-                                <div className={`mt-2 text-sm text-gray-600 ${expandedItems[`${item.id}-mobile-${cIdx}`] ? 'block' : 'hidden'}`}> 
-                                  {candidatePolicy.details && candidatePolicy.details.map((detail: string, detailIndex: number) => (
-                                    <p key={detailIndex}>- {detail}</p>
-                                  ))}
-                                  <div className="mt-2 text-xs text-gray-500">
-                                    출처:
-                                    <span className="text-primary underline ml-1">{candidatePolicy.source}</span>
-                                  </div>
-                                </div>
-                              </div>
+          {/* 세부 정책 항목 탭 */}
+          <div className="overflow-x-auto whitespace-nowrap pb-2 mb-6 border-b border-divider">
+            <div className="flex space-x-4">
+              {policyItems.map((item, index) => (
+                <div key={item.id} className="relative">
+                  <button 
+                    className={`px-5 py-3 text-sm font-medium rounded-t-lg border-b-2 transition-all ${
+                      activeSlideIndex === index 
+                        ? 'border-primary text-primary bg-primary bg-opacity-5 font-bold' 
+                        : 'border-transparent text-text-secondary hover:text-text-primary hover:bg-gray-50'
+                    }`}
+                    onClick={() => handleSlideChange(index)}
+                  >
+                    {item.title}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 슬라이드 컨테이너 */}
+          <div 
+            ref={sliderRef}
+            className="overflow-x-auto snap-x snap-mandatory flex w-full"
+            style={{ 
+              scrollSnapType: 'x mandatory',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              minHeight: '500px'
+            }}
+          >
+            {policyItems.map((item) => (
+              <div 
+                key={item.id}
+                className="min-w-full w-full snap-center flex flex-col"
+                style={{ scrollSnapAlign: 'start' }}
+              >
+                <div className="mb-6">
+                  <h3 className="text-2xl font-semibold text-text-primary">{item.title}</h3>
+                  <div className="w-20 h-1 bg-primary mt-2 rounded-full"></div>
+                </div>
+
+                {/* 후보자별 정책 카드 - 가로 배열 */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                  {candidates.slice(0, 3).map((candidate) => {
+                    // 해당 후보의 정책 찾기
+                    const policy = item.policies.find(p => p.candidateId === candidate.id);
+                    const isExpanded = expandedItems[`${candidate.id}-${item.id}`];
+                    
+                    return (
+                      <div key={`${candidate.id}-${item.id}`} className="bg-white rounded-xl shadow-sm p-5 border border-divider hover:shadow-md transition-shadow flex flex-col min-h-[200px]">
+                        <div className="flex items-center mb-4">
+                          <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden mr-3">
+                            {candidate.profileImage && (
+                              <Image 
+                                src={candidate.profileImage} 
+                                alt={candidate.name}
+                                width={48}
+                                height={48}
+                                className="w-full h-full object-cover"
+                              />
                             )}
                           </div>
-                        </td>
-                      );
-                    })}
-                  </tr>
+                          <div>
+                            <h4 className="font-semibold text-lg">{candidate.name}</h4>
+                            <p className="text-text-secondary text-sm">{candidate.party}</p>
+                          </div>
+                        </div>
+
+                        {policy ? (
+                          <>
+                            <div className="pl-3 border-l-2 border-primary mb-4">
+                              <p className="text-text-primary">{policy.summary}</p>
+                            </div>
+
+                            <div className={`transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[600px]' : 'max-h-0'}`}>
+                              {policy.details.length > 0 && (
+                                <div className="space-y-3 bg-gray-50 p-4 rounded-lg">
+                                  <h5 className="font-medium text-text-primary">상세 공약</h5>
+                                  <ul className="list-disc pl-5 text-text-secondary">
+                                    {policy.details.map((detail, i) => (
+                                      <li key={i} className="mb-2">{detail}</li>
+                                    ))}
+                                  </ul>
+                                  <p className="text-xs text-text-secondary mt-3">출처: {policy.source}</p>
+                                </div>
+                              )}
+                            </div>
+
+                            <button
+                              onClick={() => toggleItemExpand(candidate.id, item.id)}
+                              className="text-primary flex items-center text-sm hover:underline mt-auto pt-4"
+                            >
+                              {isExpanded ? (
+                                <>
+                                  <span>접기</span>
+                                  <i className="ri-arrow-up-s-line ml-1"></i>
+                                </>
+                              ) : (
+                                <>
+                                  <span>더보기</span>
+                                  <i className="ri-arrow-down-s-line ml-1"></i>
+                                </>
+                              )}
+                            </button>
+                          </>
+                        ) : (
+                          <div className="flex-1 flex items-center justify-center text-text-secondary italic">
+                            이 정책에 대한 공약이 없습니다
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 페이지 인디케이터 */}
+          <div className="flex flex-col items-center justify-center mt-8">
+            <div className="flex items-center justify-center space-x-3 mb-2">
+              <button
+                onClick={() => activeSlideIndex > 0 && handleSlideChange(activeSlideIndex - 1)}
+                className={`w-8 h-8 flex items-center justify-center rounded-full ${
+                  activeSlideIndex > 0 
+                    ? 'text-primary hover:bg-primary hover:bg-opacity-10' 
+                    : 'text-gray-300 cursor-not-allowed'
+                }`}
+                disabled={activeSlideIndex === 0}
+              >
+                <i className="ri-arrow-left-s-line text-xl"></i>
+              </button>
+              <div className="flex justify-center space-x-2">
+                {policyItems.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`w-3 h-3 rounded-full transition-all ${
+                      activeSlideIndex === index 
+                        ? 'bg-primary scale-110' 
+                        : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                    onClick={() => handleSlideChange(index)}
+                    aria-label={`슬라이드 ${index + 1}`}
+                  />
                 ))}
-              </tbody>
-            </table>
+              </div>
+              <button
+                onClick={() => activeSlideIndex < policyItems.length - 1 && handleSlideChange(activeSlideIndex + 1)}
+                className={`w-8 h-8 flex items-center justify-center rounded-full ${
+                  activeSlideIndex < policyItems.length - 1 
+                    ? 'text-primary hover:bg-primary hover:bg-opacity-10' 
+                    : 'text-gray-300 cursor-not-allowed'
+                }`}
+                disabled={activeSlideIndex === policyItems.length - 1}
+              >
+                <i className="ri-arrow-right-s-line text-xl"></i>
+              </button>
+            </div>
+            <p className="text-sm text-text-secondary">
+              {activeSlideIndex + 1} / {policyItems.length}
+            </p>
           </div>
         </section>
 
+        
         {/* 지역별 보기 섹션 */}
         <section id="region-section" className={`mb-8 ${viewType === 'region' ? 'block' : 'hidden'}`}>
           <div className="overflow-x-auto whitespace-nowrap pb-4 mb-6">

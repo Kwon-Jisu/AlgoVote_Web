@@ -15,7 +15,8 @@ export default function Home() {
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-text-primary mb-6 whitespace-nowrap">정확한 정보를 바탕으로, 현명한 선택을</h1>
           <p className="text-lg sm:text-xl text-text-secondary max-w-2xl mx-auto mb-8">
             더 나은 선택은 객관적인 정보 비교에서 시작됩니다.<br></br>
-            알고투표는 유권자가 정책과 비전을 쉽게 비교하고 현명한 결정을 내릴 수 있도록 돕는 플랫폼입니다.
+            알고투표는 유권자가 정책과 비전을 쉽게 비교하고
+            현명한 결정을 내릴 수 있도록 돕는 플랫폼입니다.
           </p>
           <div className="flex justify-center">
             <Link href="/chatbot" className="btn-primary whitespace-nowrap">
