@@ -195,14 +195,6 @@ export default function Compare() {
         <div className="mb-8 bg-white rounded-2xl shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">비교 기준 선택</h2>
-            <div className="relative group">
-              <div className="w-6 h-6 flex items-center justify-center text-text-secondary cursor-help">
-                <i className="ri-information-line"></i>
-              </div>
-              <span className="absolute right-0 top-full w-64 p-3 bg-white shadow-lg rounded-lg border border-divider text-xs text-text-secondary z-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                동시에 두 기준을 선택할 수는 없습니다.
-              </span>
-            </div>
           </div>
 
           <div className="flex space-x-4">
@@ -642,14 +634,14 @@ export default function Compare() {
             </div>
             <div>
               <h3 className="text-lg font-medium">더 궁금한 공약이 있으신가요?</h3>
-              <p className="text-text-secondary">AI 챗봇에게 질문하고 더 자세한 정보를 얻어보세요.</p>
+              <p className="text-text-secondary">후보자 AI에게 질문하고 더 자세한 정보를 얻어보세요.</p>
             </div>
           </div>
           <Link
             href="/chatbot"
             className="bg-primary text-white px-6 py-3 rounded-button font-medium whitespace-nowrap"
           >
-            챗봇에게 질문하러 가기
+            후보자와 대화하기
           </Link>
         </div>
 
