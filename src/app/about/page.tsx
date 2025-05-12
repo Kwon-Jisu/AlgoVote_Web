@@ -74,19 +74,22 @@ export default function About() {
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-10">
             {teamMembers.map(member => (
-              <div key={member.id} className="flex flex-col items-center text-center">
+              <a 
+                key={member.id} 
+                href={member.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center text-center cursor-pointer group"
+              >
                 <div className="relative w-full pb-[100%] bg-[#E5E7EB] rounded-2xl overflow-hidden mb-4">
                   {/* 링크드인 아이콘 */}
                   {member.linkedin && (
-                    <a 
-                      href={member.linkedin} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="absolute top-2.5 right-2.5 z-10 w-8 h-8 bg-black rounded-button flex items-center justify-center"
+                    <div 
+                      className="absolute top-2.5 right-2.5 z-10 w-8 h-8 bg-black group-hover:bg-primary rounded-button flex items-center justify-center transition-colors"
                       aria-label={`${member.name}의 링크드인 프로필`}
                     >
                       <i className="ri-linkedin-fill text-white"></i>
-                    </a>
+                    </div>
                   )}
                   
                   {/* 프로필 이미지 */}
@@ -116,7 +119,7 @@ export default function About() {
                 {/* 역할 및 이름 */}
                 <p className="text-sm text-text-secondary font-medium mb-1">{member.role}</p>
                 <h3 className="font-bold text-lg text-text-primary">{member.name}</h3>
-              </div>
+              </a>
             ))}
           </div>
         </section>
