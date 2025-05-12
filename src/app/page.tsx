@@ -19,35 +19,6 @@ export default function Home() {
             알고투표는 유권자가 정책과 비전을 쉽게 비교하고<br></br>
             현명한 결정을 내릴 수 있도록 돕는 플랫폼입니다.
           </p>
-          
-          <div className="flex flex-col items-center justify-center mb-6">
-            <div className="flex flex-row justify-center items-center gap-2 mb-2 relative">
-                  <div className="flex items-center gap-8">
-                    <Image 
-                      src="/images/sources/national-election-commission.png"
-                      alt="중앙선거관리위원회"
-                      width={100}
-                      height={100}
-                      className="w-[150px] h-auto sm:w-[150px] md:w-[200px] object-contain"
-                    />
-                    <Image 
-                      src="/images/sources/central-election-broadcast-debate-committee.png"
-                      alt="중앙선거방송토론위원회"
-                      width={100}
-                      height={100}
-                      className="w-[150px] h-auto sm:w-[150px] md:w-[200px] object-contain"
-                    />
-                  </div>
-                  <div className="relative group mb-2">
-                    <div className="w-6 h-6 flex items-center justify-center text-text-secondary cursor-help">
-                      <i className="ri-information-line"></i>
-                    </div>
-                    <span className="absolute right-0 top-full w-72 p-3 bg-white shadow-lg rounded-lg border border-divider text-xs text-text-secondary z-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                      본 서비스는 다음 기관의 공식 자료를 기반으로 데이터 수집 및 가공되었습니다. 클릭시 데이터 수집 현황이 표시됩니다.
-                    </span>
-                  </div>
-            </div>
-          </div>
 
           <div className="flex justify-center">
             <Link href="/chatbot" className="btn-primary whitespace-nowrap">
@@ -129,7 +100,7 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto max-w-4xl bg-primary bg-opacity-5 rounded-2xl p-8 sm:p-12">
+        <div className="container mx-auto max-w-4xl bg-primary bg-opacity-5 rounded-2xl p-8 mb-12 sm:p-12 ">
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-bold text-text-primary mb-4">투표일 안내</h2>
             <p className="text-text-secondary mb-8 whitespace-nowrap">2025년 6월 3일 (화) 오전 6시 ~ 오후 8시</p>
@@ -138,6 +109,34 @@ export default function Home() {
             </Link>
           </div>
         </div>
+        <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-row justify-center items-center gap-2 mb-2 relative">
+                  <div className="flex items-center gap-8">
+                    <Image 
+                      src="/images/sources/national-election-commission.png"
+                      alt="중앙선거관리위원회"
+                      width={100}
+                      height={100}
+                      className="w-[150px] h-auto sm:w-[150px] md:w-[200px] object-contain"
+                    />
+                    <Image 
+                      src="/images/sources/central-election-broadcast-debate-committee.png"
+                      alt="중앙선거방송토론위원회"
+                      width={100}
+                      height={100}
+                      className="w-[150px] h-auto sm:w-[150px] md:w-[200px] object-contain"
+                    />
+                  </div>
+                  <div className="relative group mb-2">
+                    <div className="w-6 h-6 flex items-center justify-center text-text-secondary cursor-help">
+                      <i className="ri-information-line"></i>
+                    </div>
+                    <span className="absolute right-0 top-full w-72 p-3 bg-white shadow-lg rounded-lg border border-divider text-xs text-text-secondary z-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                      본 서비스는 다음 기관의 공식 자료를 기반으로 데이터 수집 및 가공되었습니다. 클릭시 데이터 수집 현황이 표시됩니다.
+                    </span>
+                  </div>
+            </div>
+          </div>
       </section>
     </div>
   );
