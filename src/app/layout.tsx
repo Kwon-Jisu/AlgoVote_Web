@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "알고투표 - 정확한 정보를 바탕으로, 현명한 선택을",
     description: "정확한 정보를 바탕으로, 현명한 선택을",
-    images: ["https://github.com/user-attachments/assets/ffd90d31-e90c-4cf7-844f-2c0bbdf448e"],
+    images: ["https://www.algovote.info/og-image.png"],
   },
 }
 
