@@ -44,8 +44,8 @@ export interface TeamMember {
   id: string;
   name: string;
   role: string;
-  quote: string;
   image?: string;
+  linkedin?: string;
 }
 
 // 출처 메타데이터 타입
