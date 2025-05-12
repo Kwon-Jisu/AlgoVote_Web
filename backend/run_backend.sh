@@ -3,53 +3,87 @@
 # 환경 변수 파일 경로
 ENV_FILE=".env"
 
-# 기존 API 키 확인
-if [ -f "$ENV_FILE" ]; then
-  existing_key=$(grep -E "^GOOGLE_API_KEY=" "$ENV_FILE" | cut -d '=' -f2)
-  if [ ! -z "$existing_key" ]; then
-    echo "기존 Gemini API 키를 사용합니다."
-    api_key="$existing_key"
-  fi
-fi
+echo "=== AlgoVote 백엔드 실행 스크립트 ==="
 
-# 기존 키가 없는 경우 입력 요청
-if [ -z "$api_key" ]; then
-  echo "Google Gemini API 키를 입력하세요:"
-  read api_key
+# 기존 환경 변수 확인
+if [ -f "$ENV_FILE" ]; then
+  echo "환경 변수 파일(.env)을 불러옵니다."
   
-  # 입력된 API 키 확인
-  if [ -z "$api_key" ]; then
-    echo "API 키가 입력되지 않았습니다. 기본 설정으로 진행합니다."
+  # API 키 불러오기
+  google_api_key=$(grep -E "^GOOGLE_API_KEY=" "$ENV_FILE" | cut -d '=' -f2)
+  supabase_key=$(grep -E "^SUPABASE_KEY=" "$ENV_FILE" | cut -d '=' -f2)
+  
+  if [ ! -z "$google_api_key" ]; then
+    echo "✓ Google API 키가 설정되어 있습니다."
+    api_key="$google_api_key"
   else
-    echo "API 키가 설정되었습니다."
-    
-    # 입력된 키를 .env 파일에 저장할지 물어보기
-    echo "입력한 API 키를 .env 파일에 저장할까요? (y/n)"
-    read save_key
-    
-    if [[ "$save_key" == "y" || "$save_key" == "Y" ]]; then
-      # .env 파일이 없으면 생성
-      if [ ! -f "$ENV_FILE" ]; then
-        touch "$ENV_FILE"
-      fi
-      
-      # 기존 GOOGLE_API_KEY 항목이 있으면 교체, 없으면 추가
-      if grep -q "^GOOGLE_API_KEY=" "$ENV_FILE"; then
-        sed -i '' "s/^GOOGLE_API_KEY=.*/GOOGLE_API_KEY=$api_key/" "$ENV_FILE"
-      else
-        echo "GOOGLE_API_KEY=$api_key" >> "$ENV_FILE"
-      fi
-      
-      echo "API 키가 .env 파일에 저장되었습니다."
-    fi
+    echo "⚠️ Google API 키가 설정되어 있지 않습니다."
+  fi
+  
+  if [ ! -z "$supabase_key" ]; then
+    echo "✓ Supabase 키가 설정되어 있습니다."
+    sb_key="$supabase_key"
+  else
+    echo "⚠️ Supabase 키는 기본값을 사용합니다."
   fi
 else
-  echo "API 키가 설정되었습니다."
+  echo "환경 변수 파일(.env)이 없습니다. 새로 생성합니다."
+  touch "$ENV_FILE"
 fi
 
-# 가상환경 활성화
-source venv/bin/activate 2>/dev/null || echo "가상환경이 없습니다. 가상환경을 먼저 설정해주세요."
+# Google API 키 입력 받기
+if [ -z "$api_key" ]; then
+  echo ""
+  echo "Google Gemini API 키를 입력하세요 (필수):"
+  read api_key
+  
+  if [ -z "$api_key" ]; then
+    echo "⚠️ API 키가 입력되지 않았습니다. 서버가 제대로 작동하지 않을 수 있습니다."
+  else
+    echo "✓ API 키가 설정되었습니다."
+    
+    # 환경 변수 파일에 저장
+    if grep -q "^GOOGLE_API_KEY=" "$ENV_FILE"; then
+      sed -i '' "s/^GOOGLE_API_KEY=.*/GOOGLE_API_KEY=$api_key/" "$ENV_FILE"
+    else
+      echo "GOOGLE_API_KEY=$api_key" >> "$ENV_FILE"
+    fi
+    echo "✓ API 키가 .env 파일에 저장되었습니다."
+  fi
+fi
 
-# API 키 환경변수로 설정 후 실행
+# Supabase 키 입력 받기 (선택 사항)
+echo ""
+echo "Supabase 키를 입력하시겠습니까? (기본값 사용: 엔터키, 입력: y)"
+read use_supabase_key
+
+if [[ "$use_supabase_key" == "y" || "$use_supabase_key" == "Y" ]]; then
+  echo "Supabase 키를 입력하세요 (선택 사항):"
+  read sb_key
+  
+  if [ ! -z "$sb_key" ]; then
+    echo "✓ Supabase 키가 설정되었습니다."
+    
+    # 환경 변수 파일에 저장
+    if grep -q "^SUPABASE_KEY=" "$ENV_FILE"; then
+      sed -i '' "s/^SUPABASE_KEY=.*/SUPABASE_KEY=$sb_key/" "$ENV_FILE"
+    else
+      echo "SUPABASE_KEY=$sb_key" >> "$ENV_FILE"
+    fi
+    echo "✓ Supabase 키가 .env 파일에 저장되었습니다."
+  fi
+fi
+
+echo ""
+echo "=== 백엔드 서버 시작 준비 ==="
+
+# 가상환경 활성화
+source venv/bin/activate 2>/dev/null || echo "⚠️ 가상환경이 없습니다. setup.sh를 먼저 실행하세요."
+
+# 환경 변수 설정 및 서버 실행
 echo "백엔드 서버를 시작합니다..."
-GOOGLE_API_KEY="$api_key" python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000 
+if [ ! -z "$sb_key" ]; then
+  GOOGLE_API_KEY="$api_key" SUPABASE_KEY="$sb_key" python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+else
+  GOOGLE_API_KEY="$api_key" python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+fi 
