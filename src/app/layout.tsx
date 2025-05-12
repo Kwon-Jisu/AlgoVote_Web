@@ -24,18 +24,21 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: '알고투표 - 정확한 정보를 바탕으로, 현명한 선택을',
-  description: '알고투표는 객관적인 정보를 통해 유권자들이 편향 없이 후보자를 비교하고 현명한 선택을 할 수 있도록 돕는 플랫폼입니다.',
+  description: '더 나은 선택, 객관적인 정보 비교로부터. 알고투표는 정책과 비전을 쉽게 비교해 현명한 결정을 돕습니다.',
+  icons: {
+    icon: '/favicon-96x96.png',
+  },
   verification: {
     google: 'snL0p51GqrQvKnaFxjpv19b8rvYDYYF66HBF5L9q61s',
   },
   openGraph: {
-    title: "알고투표",
-    description: "알고투표는 객관적인 정보를 통해 유권자들이 편향 없이 후보자를 비교하고 현명한 선택을 할 수 있도록 돕는 플랫폼입니다.",
-    url: "https://algo-vote-rosy.vercel.app/",
+    title: "알고투표 - 정확한 정보를 바탕으로, 현명한 선택을",
+    description: "더 나은 선택, 객관적인 정보 비교로부터. 알고투표는 정책과 비전을 쉽게 비교해 현명한 결정을 돕습니다.",
+    url: "https://www.algovote.info/",
     siteName: "알고투표",
     images: [
       {
-        url: "https://github.com/user-attachments/assets/28b5f0bb-1473-4007-b3c6-ddc1f34da42f",
+        url: "https://www.algovote.info/og-image.png",
         width: 1200,
         height: 630,
       },
@@ -45,9 +48,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "알고투표",
-    description: "알고투표는 객관적인 정보를 통해 유권자들이 편향 없이 후보자를 비교하고 현명한 선택을 할 수 있도록 돕는 플랫폼입니다.",
-    images: ["https://github.com/user-attachments/assets/28b5f0bb-1473-4007-b3c6-ddc1f34da42f"],
+    title: "알고투표 - 정확한 정보를 바탕으로, 현명한 선택을",
+    description: "정확한 정보를 바탕으로, 현명한 선택을",
+    images: ["https://github.com/user-attachments/assets/ffd90d31-e90c-4cf7-844f-2c0bbdf448e"],
   },
 }
 
