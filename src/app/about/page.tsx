@@ -32,7 +32,7 @@ const teamMembers: TeamMember[] = [
     name: '곽예림',
     role: 'PM&Marketing',
     image: '/images/team/kwak-yerim.jpg',
-    linkedin: 'https://www.linkedin.com/in/christopher?utm_source=algotovote.com&utm_medium=referral&utm_campaign=about-page'
+    linkedin: 'https://www.linkedin.com/in/yelimkwak/?utm_source=algotovote.com&utm_medium=referral&utm_campaign=about-page'
   },
   {
     id: '5',
