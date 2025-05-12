@@ -5,7 +5,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import PledgeAccordion from '@/components/candidates/PledgeAccordion';
-import { getCandidateDataById } from '@/data/candidates';
+import { getCandidateDataById, regionalPolicies } from '@/data/candidates';
+import RegionalPolicyCard from '@/components/regional-policy-card';
+
+// 타입 정의 추가
+type Policy = {
+  icon: string;
+  text: string;
+};
+
+type RegionalPolicy = {
+  candidateId: string;
+  name: string;
+  policies: Policy[];
+};
 
 export default function CandidateDetail() {
   const [selectedPledge, setSelectedPledge] = useState<string | null>(null);
@@ -206,34 +219,32 @@ export default function CandidateDetail() {
           </>
         )}
 
-        {/* 주요 발언 */}
+        {/* 지역별 공약 */}
         {activeTab === 'statements' && (
           <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
             <h2 className="text-2xl font-bold mb-6">지역별 공약</h2>
-            {statements && statements.length > 0 ? (
-              <div className="space-y-6">
-                {statements.map((statement) => (
-                  <div key={statement.id} className="p-4 border border-gray-100 rounded-lg">
-                    <blockquote className="text-lg font-medium text-text-primary mb-2">
-                      &quot;{statement.content}&quot;
-                    </blockquote>
-                    <div className="flex justify-between items-center text-text-secondary text-sm">
-                      <span>출처: {statement.source}</span>
-                      <span>{statement.date}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-          <div className="text-center py-12">
-            <h3 className="text-xl font-medium text-gray-700 mb-2">준비 중입니다</h3>
-            <p className="text-gray-500">해당 콘텐츠는 현재 준비 중입니다. 빠른 시일 내에 제공하겠습니다.</p>
-              </div>
-            )}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {['capital', 'chungcheong', 'yeongnam', 'honam', 'gangwon', 'jeju'].map((region) => {
+                const regionalData = regionalPolicies[region as keyof typeof regionalPolicies]?.find(
+                  (data: RegionalPolicy) => data.candidateId === candidate.id
+                );
+                
+                return (
+                  <RegionalPolicyCard
+                    key={region}
+                    candidate={candidate}
+                    selectedRegion={region}
+                    regionalPolicy={regionalData}
+                    showChatbotLink={false}
+                    showProfile={false}
+                  />
+                );
+              })}
+            </div>
           </div>
         )}
 
-        {/* Q&A */}
+        {/* 토론회 발언 */}
         {activeTab === 'qna' && (
           <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
             <h2 className="text-2xl font-bold mb-6">토론회 주요 발언 및 Q&A</h2>
