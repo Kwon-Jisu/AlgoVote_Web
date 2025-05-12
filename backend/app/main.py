@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, Request, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import List, Optional, Dict, Any, Callable, Awaitable
 import os
 import logging
 import gc
@@ -16,7 +16,7 @@ from .database import get_db, engine, Base, Candidate, Policy
 from .schemas import Candidate as CandidateSchema
 from .schemas import Policy as PolicySchema
 from .schemas import CandidateCreate, PolicyCreate, ChatRequest, ChatResponse
-from .ai import get_ai_response
+from .ai import get_ai_response, get_rag_response
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)
@@ -106,6 +106,36 @@ async def options_route(rest_of_path: str, request: Request):
         }
     )
 
+# 공통 오류 응답 생성 함수
+def create_error_response(error_type: str, error_message: str) -> ChatResponse:
+    """
+    챗봇 API의 표준화된 오류 응답 생성
+    """
+    logger.error(f"{error_type} 오류: {error_message}")
+    return ChatResponse(
+        answer=f"죄송합니다. {error_message} 잠시 후 다시 시도해주세요.",
+        related_policies=[],
+        source_metadata=None
+    )
+
+# 안전한 API 호출 래퍼 함수
+async def safe_api_call(
+    api_func: Callable[[str, Any], Awaitable[ChatResponse]], 
+    question: str, 
+    extra_param: Any = None,
+    *args, **kwargs
+) -> ChatResponse:
+    """
+    안전한 API 호출 처리를 위한 래퍼 함수
+    """
+    try:
+        if extra_param is not None:
+            return await api_func(question, extra_param, *args, **kwargs)
+        else:
+            return await api_func(question, *args, **kwargs)
+    except Exception as e:
+        return create_error_response("API 호출", f"요청 처리 중 서버 오류가 발생했습니다: {str(e)}")
+
 # 서버 상태 확인용 헬스체크 엔드포인트
 @app.get("/health")
 async def health_check():
@@ -116,39 +146,6 @@ async def health_check():
 async def root():
     return {"message": "AlgoVote API에 오신 것을 환영합니다!"}
 
-# 새로운 API 엔드포인트 - /api/question
-@app.post("/api/question")
-async def answer_question(request: ChatRequest, background_tasks: BackgroundTasks):
-    logger.info(f"질문 받음: {request.question}")
-    
-    # AI 응답 생성 - 일단 데이터베이스 없이 처리
-    try:
-        # 데이터베이스 없이 직접 질문 처리
-        response = await get_ai_response(request.question, None)
-        
-        # CORS 헤더 추가
-        headers = {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "*",
-            "Access-Control-Allow-Headers": "*",
-        }
-        
-        return JSONResponse(content=response.dict(), headers=headers)
-    except Exception as e:
-        logger.error(f"API question 엔드포인트 오류: {e}")
-        return JSONResponse(
-            content={
-                "answer": "죄송합니다. 요청 처리 중 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-                "related_policies": []
-            },
-            headers={
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "*",
-                "Access-Control-Allow-Headers": "*",
-            }
-        )
-
-# 데이터베이스 의존 엔드포인트들 (챗봇 개발 후 필요 시 수정)
 # 후보자 관련 엔드포인트
 @app.get("/candidates/", response_model=List[CandidateSchema])
 async def read_candidates(db: Session = Depends(get_db)):
@@ -172,19 +169,41 @@ async def read_candidate(candidate_id: int, db: Session = Depends(get_db)):
         logger.error(f"후보자 상세 조회 오류: {e}")
         raise HTTPException(status_code=500, detail="서버 오류가 발생했습니다.")
 
-# 챗봇 엔드포인트 - 데이터베이스 의존성 없이도 작동하도록 수정
+# 챗봇 API 엔드포인트 (전통적 방식)
 @app.post("/chat/", response_model=ChatResponse)
 async def chat(request: ChatRequest, background_tasks: BackgroundTasks):
-    # AI 응답 생성 (비동기 처리)
-    try:
-        response = await get_ai_response(request.question, None)
-        return response
-    except Exception as e:
-        logger.error(f"Chat 엔드포인트 오류: {e}")
-        return ChatResponse(
-            answer="죄송합니다. 요청 처리 중 서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-            related_policies=[]
-        )
+    """
+    전통적인 방식의 챗봇 API (기존 Gemini 직접 호출)
+    """
+    logger.info(f"챗봇 질문 받음: {request.question}")
+    return await safe_api_call(get_ai_response, request.question, None)
+
+# RAG 기반 챗봇 API 엔드포인트
+@app.post("/rag-chat/", response_model=ChatResponse)
+async def rag_chat(request: ChatRequest, background_tasks: BackgroundTasks):
+    """
+    RAG 기반 챗봇 API (Supabase 벡터 스토어 활용)
+    """
+    logger.info(f"RAG 질문 받음: {request.question}")
+    return await safe_api_call(get_rag_response, request.question, request.candidate)
+
+# 레거시 호환 API 엔드포인트
+@app.post("/api/question", response_model=ChatResponse)
+async def answer_question(request: ChatRequest, background_tasks: BackgroundTasks):
+    """
+    이전 버전 호환성을 위한 API 엔드포인트 (현재는 RAG 방식으로 처리)
+    """
+    logger.info(f"API 질문 받음: {request.question}")
+    return await safe_api_call(get_rag_response, request.question, request.candidate)
+
+# 레거시 Predict 엔드포인트 - RAG 방식으로 통합
+@app.post("/predict", response_model=ChatResponse)
+async def predict(request: ChatRequest):
+    """
+    다른 형식의 레거시 엔드포인트 (RAG 방식으로 통합)
+    """
+    logger.info(f"Predict 질문 받음: {request.question}")
+    return await safe_api_call(get_rag_response, request.question, request.candidate)
 
 if __name__ == "__main__":
     import uvicorn

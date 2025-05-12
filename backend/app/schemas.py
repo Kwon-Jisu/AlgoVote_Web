@@ -45,6 +45,7 @@ class SourceMetadata(BaseModel):
 class ChatRequest(BaseModel):
     question: str
     candidate_ids: Optional[List[int]] = None
+    candidate: Optional[str] = None  # 후보자 이름 또는 식별자
 
 class ChatResponse(BaseModel):
     answer: str
