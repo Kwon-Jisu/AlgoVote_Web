@@ -102,8 +102,8 @@ export default function Home() {
                 <i className="ri-scales-3-line text-primary text-xl"></i>
               </div>
               <h3 className="text-xl font-bold text-center mb-3">객관적 비교</h3>
-              <p className="text-text-secondary text-center">각 후보자의 공약과 정책을 객관적인<br></br>
-                기준으로 비교하여 제공합니다.</p>
+              <p className="text-text-secondary text-center">각 후보자의 공약과 정책을<br></br>
+                객관적인 기준으로 비교하여 제공합니다.</p>
             </div>
             {/* Feature 2 */}
             <div className="bg-white p-6 rounded-2xl shadow-sm">
@@ -120,7 +120,7 @@ export default function Home() {
                 <i className="ri-robot-2-line text-primary text-xl"></i>
               </div>
               <h3 className="text-xl font-bold text-center mb-3">AI 질의응답</h3>
-              <p className="text-text-secondary text-center">AI 후보자와 직접 대화하면서<br></br>
+              <p className="text-text-secondary text-center">AI 후보자와의 대화를 통해<br></br>
                 정책과 비전에 대한 정보를 제공합니다.</p>
             </div>
           </div>

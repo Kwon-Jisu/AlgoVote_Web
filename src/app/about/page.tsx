@@ -34,7 +34,7 @@ export default function About() {
         {/* 인트로 섹션 */}
         <section className="container mx-auto px-4 md:px-6 py-16 md:py-20 text-center fade-in">
           <blockquote className="text-2xl md:text-4xl font-bold text-text-primary max-w-3xl mx-auto">
-            &quot;더 나은 선택을 돕고 싶었습니다.&quot;
+            &quot;공약을 모르고 투표하는 일은 없도록&quot;
           </blockquote>
         </section>
 
@@ -42,10 +42,12 @@ export default function About() {
         <section className="container mx-auto px-4 md:px-6 py-12 md:py-16 fade-in">
           <div className="max-w-3xl mx-auto">
             <p className="text-lg text-text-secondary leading-relaxed mb-6">
-              알고투표는 정확하고 신뢰할 수 있는 정보를 통해 사용자가 스스로 판단할 수 있도록 돕기 위해 만들어졌습니다. 정치적 중립성과 객관성을 최우선으로 생각합니다.
+              ‘이 사람이 어떤 정책을 내세우는지’보다, ‘그냥 괜찮아 보이니까’가 기준이 되곤 했습니다.<br></br>
+              정책과 비전을 직접 비교하며 판단할 수 있다면, 더 나은 선택이 가능하지 않을까.그 물음에서 ‘알고투표’는 시작됐습니다.
             </p>
             <p className="text-lg text-text-secondary leading-relaxed">
-              선거 시기마다 쏟아지는 정보의 홍수 속에서, 유권자들이 각 후보의 정책과 공약을 쉽게 비교하고 이해할 수 있는 플랫폼을 제공하고자 합니다. 모든 시민이 더 나은 정보에 기반한 선택을 할 수 있도록 돕는 것이 저희의 목표입니다.
+              정치적 중립성과 객관성을 바탕으로, 누구나 공약을 비교하고 판단할 수 있도록 돕는 것.<br></br>
+              그것이 우리가 생각하는 더 나은 민주주의의 출발점입니다.
             </p>
           </div>
         </section>
