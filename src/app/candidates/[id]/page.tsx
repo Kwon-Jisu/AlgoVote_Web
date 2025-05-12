@@ -27,7 +27,7 @@ export default function CandidateDetail() {
   const candidateId = params.id as string;
   
   // candidates.ts에서 데이터 가져오기
-  const { candidate, pledges, statements, qnas } = getCandidateDataById(candidateId);
+  const { candidate, pledges, qnas } = getCandidateDataById(candidateId);
 
   // 후보자 데이터가 없는 경우 처리
   if (!candidate) {
