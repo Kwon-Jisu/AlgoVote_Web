@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   /* config options here */
   images: {
     remotePatterns: [
@@ -17,6 +16,17 @@ const nextConfig: NextConfig = {
     ],
   },
   
+  // webpack 설정 추가
+  webpack(config) {
+    // SVG 처리를 위한 설정
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ['@svgr/webpack'],
+    });
+
+    return config;
+  },
+  
   // API 요청 프록시 설정
   async rewrites() {
     return [
@@ -31,4 +41,4 @@ const nextConfig: NextConfig = {
   }
 };
 
-export default nextConfig;
+module.exports = nextConfig; 

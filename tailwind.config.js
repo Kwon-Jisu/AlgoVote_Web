@@ -1,15 +1,18 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/lib/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/hooks/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/data/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
       colors: {
-        primary: "#3C00FF", // 메인 컬러
+        primary: "#3449FF", // 메인 컬러
         background: "#F5F7FA", // 배경 컬러
         "text-primary": "#1E1E1E", // 기본 텍스트
         "text-secondary": "#6B7280", // 보조 텍스트
@@ -73,6 +76,5 @@ const config: Config = {
     require('@tailwindcss/typography'),
     require('@tailwindcss/aspect-ratio'),
   ],
-};
+}
 
-export default config; 

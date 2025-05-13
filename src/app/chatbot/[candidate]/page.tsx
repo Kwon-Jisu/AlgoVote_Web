@@ -330,21 +330,25 @@ export default function ChatbotCandidatePage() {
         )}
         
         {/* 예시 질문 버튼 영역 */}
-        <div className="flex justify-center">
-          <div className="flex flex-wrap gap-2 mb-3 justify-center">
-            {["청년 일자리 정책이 궁금해요", "주거 지원 방안 알려주세요", "노인 복지 공약 설명해 주세요", "경제 성장 전략이 뭔가요?"].map((example) => (
-              <button
-                key={example}
-                type="button"
-                className="bg-[#F0F4FF] text-[#3449FF] rounded-full px-6 py-3 text-base font-medium hover:bg-[#3449FF] hover:text-white transition-colors border border-[#3449FF] min-w-[140px] min-h-[48px]"
-                onClick={() => handleSendMessage(example)}
-                disabled={isTyping}
-              >
-                {example}
-              </button>
-            ))}
+        {messages.length === 1 && (
+          <div className="flex justify-center">
+            <div className="overflow-x-auto pb-2 max-w-full">
+              <div className="flex gap-2 mb-3 md:flex-wrap md:justify-center whitespace-nowrap">
+                {["청년 일자리 정책이 궁금해요", "주거 지원 방안 알려주세요", "노인 복지 공약 설명해 주세요", "경제 성장 전략이 뭔가요?"].map((example) => (
+                  <button
+                    key={example}
+                    type="button"
+                    className="bg-[#F0F4FF] text-[#3449FF] rounded-full px-6 py-3 text-base font-medium hover:bg-[#3449FF] hover:text-white transition-colors border border-[#3449FF] min-w-[140px] min-h-[48px] flex-shrink-0"
+                    onClick={() => handleSendMessage(example)}
+                    disabled={isTyping}
+                  >
+                    {example}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
+        )}
         
         {/* 챗봇 주의사항 */}
         <div className="chat-status mb-2">
