@@ -24,7 +24,7 @@ export default function ChatbotPage() {
             후보자와 직접 대화하는 느낌으로 정책과 비전에 대해 상세히 질문해보세요!
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-3">
           {candidates.map((candidate) => (
             <div
               key={candidate.id}
