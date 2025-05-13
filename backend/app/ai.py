@@ -335,15 +335,28 @@ def search_documents(query: str, candidate=None, k=5):
         tuple: (문서 리스트, 메타데이터, 관련 정책 리스트)
     """
     try:
-        # 검색 필터 설정 (후보자 필터링이 필요한 경우)
+        # 검색 필터 설정 (필요한 경우)
         search_filter = {}
+        candidate_name = None
         if candidate:
             candidate_name = candidate.name if hasattr(candidate, 'name') else candidate
-            # 실제 필터링 로직은 벡터 스토어 구현에 따라 다를 수 있음
-            # search_filter = {"metadata": {"candidate": candidate_name}}
         
         # 벡터 검색 실행 (k개 문서 검색)
         results = retriever.get_relevant_documents(query, k=k)
+        
+        # 후보자가 지정된 경우 해당 후보자의 문서만 필터링
+        filtered_results = []
+        if candidate_name and results:
+            for doc in results:
+                if hasattr(doc, 'metadata') and doc.metadata:
+                    source = doc.metadata.get('source', '')
+                    # 소스에 후보자 이름이 포함되어 있는지 확인
+                    if candidate_name.lower() in source.lower():
+                        filtered_results.append(doc)
+            
+            # 필터링된 결과가 있으면 사용, 없으면 원래 결과 사용
+            if filtered_results:
+                results = filtered_results
         
         # 첫 번째 문서의 메타데이터 추출
         source_metadata = None
@@ -382,17 +395,17 @@ def search_documents(query: str, candidate=None, k=5):
         # 메타데이터가 없는 경우 기본값 설정
         if not source_metadata:
             source_name = DEFAULT_SOURCE
+            if candidate_name:
+                source_name = f"{candidate_name}.pdf"
+                
             source_metadata = SourceMetadata(
                 page=0,
                 source=source_name,
                 creation_date=""
             )
         
-        # 후보자 정보 추가
-        if candidate and source_metadata:
-            candidate_name = candidate.name if hasattr(candidate, 'name') else candidate
-            current_source = source_metadata.source
-            source_metadata.source = f"{candidate_name} - {current_source}"
+        # 소스 메타데이터는 그대로 반환 (이미 소스에 후보자 정보가 포함되어 있음)
+        # 후보자 정보를 다시 추가하지 않음
         
         return results, source_metadata, related_policies[:5]  # 상위 5개만 반환
     
