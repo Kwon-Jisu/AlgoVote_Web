@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { nanoid } from "nanoid";
 import { candidates } from "@/data/candidates";
 import ReactMarkdown from "react-markdown";
 import React from 'react';
+import { startChatSession, resetChatSession } from "@/lib/chat/session";
+import { saveChatMessage } from "@/lib/chat/message";
 
 // 필요한 타입 정의
 interface SourceMetadata {
@@ -113,6 +115,29 @@ export default function ChatbotCandidatePage() {
   const [retryCount, setRetryCount] = useState(0);
   const [lastQuestion, setLastQuestion] = useState("");
 
+  // 컴포넌트 마운트 시 세션 시작
+  useEffect(() => {
+    if (selectedCandidate) {
+      // 이전 세션 초기화 (페이지가 새로 로드될 때마다 새 세션 시작)
+      resetChatSession();
+      
+      // 새 채팅 세션 시작
+      startChatSession(selectedCandidate.id).then(id => {
+        if (id) {
+          // 초기 메시지 저장
+          if (messages.length > 0) {
+            saveChatMessage(messages[0], 0);
+          }
+        }
+      });
+    }
+    
+    // 컴포넌트 언마운트 시 세션 ID 정리
+    return () => {
+      resetChatSession();
+    };
+  }, [selectedCandidate, messages]);
+
   if (!selectedCandidate) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-[#F5F7FA]">
@@ -140,17 +165,22 @@ export default function ChatbotCandidatePage() {
   const handleSendMessage = async (content: string, isRetry = false) => {
     if (!selectedCandidate || !content.trim()) return;
     
+    // 사용자 메시지 객체 생성
+    const userMessage: ChatMessage = {
+      id: nanoid(),
+      role: "user",
+      content,
+      timestamp: new Date(),
+    };
+    
     // 재시도가 아닐 경우에만 새 메시지 추가
     if (!isRetry) {
-      const userMessage: ChatMessage = {
-        id: nanoid(),
-        role: "user",
-        content,
-        timestamp: new Date(),
-      };
-      
-      setMessages((prev) => [...prev, userMessage]);
+      const newMessages = [...messages, userMessage];
+      setMessages(newMessages);
       setLastQuestion(content);
+      
+      // 사용자 메시지 저장
+      await saveChatMessage(userMessage, newMessages.length - 1);
     }
     
     setIsTyping(true);
@@ -198,7 +228,12 @@ export default function ChatbotCandidatePage() {
         } : undefined
       };
       
-      setMessages((prev) => [...prev, botMessage]);
+      const newMessages = [...messages, botMessage];
+      setMessages(newMessages);
+      
+      // 봇 메시지 저장
+      await saveChatMessage(botMessage, newMessages.length - 1);
+      
       // 성공 시 재시도 카운트 초기화
       setRetryCount(0);
     } catch (error) {
@@ -229,7 +264,12 @@ export default function ChatbotCandidatePage() {
         candidateId: selectedCandidate.id,
       };
       
-      setMessages((prev) => [...prev, botErrorMessage]);
+      const newMessages = [...messages, botErrorMessage];
+      setMessages(newMessages);
+      
+      // 오류 메시지도 저장
+      await saveChatMessage(botErrorMessage, newMessages.length - 1);
+      
       console.error("답변 생성 중 오류:", error);
     } finally {
       setIsTyping(false);

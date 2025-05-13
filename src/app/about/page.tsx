@@ -180,92 +180,14 @@ export default function About() {
                 여러분의 작은 후원이 더 나은 민주주의 도구를 만드는 데 큰 힘이 됩니다.
               </p>
               <div className="flex justify-center">
-                <style jsx>{`
-                  .coffee-btn {
-                    position: relative;
-                    display: inline-flex;
-                    align-items: center;
-                    padding: 0.75rem 1.5rem;
-                    background-color: #FFDD00;
-                    color: black;
-                    font-weight: bold;
-                    border-radius: 0.5rem;
-                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                    transition: all 0.3s ease;
-                    overflow: hidden;
-                  }
-                  
-                  .coffee-btn:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-                  }
-                  
-                  .btn-content {
-                    position: relative;
-                    z-index: 10;
-                  }
-                  
-                  .heart {
-                    position: absolute;
-                    opacity: 0;
-                    transition: opacity 0.1s ease;
-                    font-size: 1.25rem;
-                    color: #EF4444;
-                  }
-                  
-                  .coffee-btn:hover .heart {
-                    opacity: 1;
-                    animation: float-up 1.5s ease-out forwards;
-                  }
-                  
-                  .heart-1 {
-                    top: 5px;
-                    left: 10px;
-                  }
-                  
-                  .heart-2 {
-                    top: 5px;
-                    left: 35%;
-                    animation-delay: 0.15s !important;
-                  }
-                  
-                  .heart-3 {
-                    top: 5px;
-                    left: 60%;
-                    animation-delay: 0.3s !important;
-                  }
-                  
-                  .heart-4 {
-                    top: 5px;
-                    right: 10px;
-                    animation-delay: 0.45s !important;
-                  }
-                  
-                  @keyframes float-up {
-                    0% {
-                      transform: translateY(0);
-                      opacity: 1;
-                    }
-                    100% {
-                      transform: translateY(-20px) rotate(10deg);
-                      opacity: 0;
-                    }
-                  }
-                `}</style>
                 <a 
                   href="https://www.buymeacoffee.com/daino_saur" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="coffee-btn"
+                  className="inline-flex items-center px-6 py-3 bg-[#FFDD00] text-black font-bold rounded-lg shadow-md hover:shadow-lg transform hover:translate-y-[-2px] transition-all duration-300"
                 >
-                  <span className="heart heart-1">❤️</span>
-                  <span className="heart heart-2">❤️</span>
-                  <span className="heart heart-3">❤️</span>
-                  <span className="heart heart-4">❤️</span>
-                  <span className="btn-content">
-                    <span className="mr-2">☕</span>
-                    <span style={{fontFamily: 'Inter'}}>Buy me a coffee</span>
-                  </span>
+                  <span className="mr-2">☕</span>
+                  <span className="font-['Inter'] text-base">Buy me a coffee</span>
                 </a>
               </div>
             </div>
