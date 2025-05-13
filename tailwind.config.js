@@ -21,6 +21,10 @@ module.exports = {
         success: "#22C55E", // 성공 알림
         error: "#EF4444", // 오류 알림
       },
+      fontFamily: {
+        'sans': ['Pretendard', 'Inter', 'Roboto', 'sans-serif'],
+        'inklipquid': ['THEFACESHOP INKLIPQUID', 'sans-serif'],
+      },
       borderRadius: {
         'none': '0px',
         'sm': '4px',

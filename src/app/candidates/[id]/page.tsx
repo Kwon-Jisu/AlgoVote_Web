@@ -80,7 +80,7 @@ export default function CandidateDetail() {
               <h1 className="text-[32px] font-bold leading-tight mr-3 text-text-primary">{candidate.name}</h1>
               <span className="text-lg font-normal text-text-secondary">{candidate.party}</span>
             </div>
-            <blockquote className="text-primary text-xl md:text-2xl font-semibold leading-snug my-4" style={{fontFamily: 'Pretendard, Inter, Roboto, sans-serif'}}>
+            <blockquote className="text-primary text-3xl md:text-4xl font-semibold leading-snug my-4 font-inklipquid">
               &quot;{candidate.slogan}&quot;
             </blockquote>
             <div className="flex flex-col md:flex-row md:space-x-12 mt-6">

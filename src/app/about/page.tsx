@@ -181,7 +181,7 @@ export default function About() {
               </p>
               <div className="flex justify-center">
                 <a 
-                  href="https://www.buymeacoffee.com/daino_saur" 
+                  href="https://www.buymeacoffee.com/algovote" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-6 py-3 bg-[#FFDD00] text-black font-bold rounded-lg shadow-md hover:shadow-lg transform hover:translate-y-[-2px] transition-all duration-300"
