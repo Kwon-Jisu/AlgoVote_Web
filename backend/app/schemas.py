@@ -35,6 +35,11 @@ class Candidate(CandidateBase):
     class Config:
         orm_mode = True
 
+# 대화 메시지 스키마
+class ChatMessage(BaseModel):
+    role: str  # 'user' 또는 'assistant'
+    content: str
+
 # 출처 메타데이터 스키마
 class SourceMetadata(BaseModel):
     page: int
@@ -46,6 +51,7 @@ class ChatRequest(BaseModel):
     question: str
     candidate_ids: Optional[List[int]] = None
     candidate: Optional[str] = None  # 후보자 이름 또는 식별자
+    conversation_history: Optional[List[ChatMessage]] = None  # 대화 이력
 
 class ChatResponse(BaseModel):
     answer: str

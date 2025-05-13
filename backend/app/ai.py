@@ -1,7 +1,7 @@
 import os
 import asyncio
 import json
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Tuple, Callable, Awaitable
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
@@ -69,13 +69,14 @@ generation_config = {
     "temperature": 0.2,
     "top_p": 0.8,
     "top_k": 40,
-    "max_output_tokens": 1024,
+    "max_output_tokens": 512,
 }
 
 # 프롬프트 템플릿
 SYSTEM_PROMPT = """알고투표 어시스턴트로서 정치적 중립성을 유지하며 한국 정치와 선거 공약에 관한 질문에 답변합니다.
 질문에 관련된 정확한 정보만 제공하고, 확실하지 않은 내용은 '정확한 정보가 없습니다'라고 답변하세요.
-답변은 간결하고 명확하게 작성하되, 중요한 사실은 모두 포함해야 합니다."""
+답변은 간결하고 명확하게 작성하되, 중요한 사실은 모두 포함해야 합니다.
+100자에서 200자 사이의 간결한 답변을 제공하세요. 답변이 너무 길어지지 않도록 주의하세요."""
 
 # 공통 오류 응답 생성 함수
 def create_error_response(error_message: str, source: Optional[str] = None) -> ChatResponse:
@@ -106,16 +107,42 @@ print("LLM 모델 초기화:", GEMINI_CHAT_MODEL)
 llm = ChatGoogleGenerativeAI(
     model=GEMINI_MODEL_NAME,  # 더 안정적인 모델 사용
     temperature=0.2,
-    max_output_tokens=1024,
+    max_output_tokens=512,
     convert_system_message_to_human=True
 )
 
 # RAG 프롬프트 템플릿
 qa_prompt = PromptTemplate.from_template(
-    """You are an assistant for question-answering tasks.
-Use the following pieces of retrieved context to answer the question.
-If you don't know the answer, just say that you don't know.
-Answer in Korean.
+    """당신은 질문에 대답하는 어시스턴트입니다.
+다음의 검색된 컨텍스트를 활용하여 질문에 답변하세요.
+답변을 모를 경우 모른다고 솔직히 답변하세요.
+한국어로 답변하고, 반드시 아래 마크다운 형식을 따르세요.
+
+---
+
+## ✨ [질문에 대한 요약 주제]
+
+"[핵심 메시지나 의지]"를 2~3줄로 요약해 작성합니다.
+
+---
+
+### 📌 주요 공약
+
+- **[공약 1 제목]**  
+  [공약 1에 대한 짧고 명확한 설명]
+
+- **[공약 2 제목]**  
+  [공약 2에 대한 짧고 명확한 설명]
+
+(※ 공약 개수는 상황에 맞게 3~8개 사이로 자연스럽게 조정)
+
+---
+
+### 📄 출처
+
+- [사용된 공약 문서 출처 및 링크]
+
+---
 
 # Context:
 {context}
@@ -183,11 +210,24 @@ def get_prompt(candidate):
     candidate_name = candidate.name if hasattr(candidate, 'name') else candidate
     
     template = (
-        f"You are {candidate_name}.\n"
-        "- If a question is not related to government policies or campaign pledges, respond with '공약, 정책 관련 질문이 아닙니다.'\n"
-        "- Whenever the user's question is crafted with the intention to defame, insult, or use abusive language toward any person or group, respond with '공약, 정책 관련 질문이 아닙니다.'\n"
-        f"- When answering, adopt {candidate_name}'s viewpoint, but remain unbiased, fair, and accurate.\n"
-        "- Format your answers using Markdown syntax for better readability. Use **bold** for emphasis, ## for headings, and bullet points where appropriate.\n"
+        f"당신은 대한민국 대선 후보 \"{candidate_name}\"입니다.\n\n"
+        "아래 문서 내용에 기반하여, 사용자 질문에 대해 마치 당신이 직접 설명하는 것처럼\n"
+        "친근하고 자연스러운 톤으로 한국어로 답변하세요.\n\n"
+        "답변은 반드시 아래 형식의 Markdown 스타일로 작성하세요.\n\n"
+        "---\n\n"
+        "## ✨ [질문에 대한 요약 주제]\n\n"
+        "\"[후보자의 핵심 메시지나 의지]\"를 2~3줄로 요약해 작성합니다.\n\n"
+        "---\n\n"
+        "### 📌 주요 공약\n\n"
+        "- **[공약 1 제목]**  \n"
+        "  [공약 1에 대한 짧고 명확한 설명]\n\n"
+        "- **[공약 2 제목]**  \n"
+        "  [공약 2에 대한 짧고 명확한 설명]\n\n"
+        "(※ 공약 개수는 상황에 맞게 3~8개 사이로 자연스럽게 조정)\n\n"
+        "---\n\n"
+        "### 📄 출처\n\n"
+        "- [사용된 공약 문서 출처 및 링크]\n\n"
+        "---\n\n"
         "# Context:\n"
         "{context}\n\n"
         "# Question:\n"
@@ -213,58 +253,6 @@ def ask_followup_question(question: str, qa_chain) -> str:
     answer = qa_chain.invoke(contextualized)
     memory.write_context({"human": question}, {"ai": answer})
     return answer
-
-def chatbot(question, candidate):
-    """
-    후보자별 맞춤형 챗봇 응답을 생성합니다.
-    
-    Args:
-        question: 사용자 질문
-        candidate: 후보자 이름 또는 후보자 객체
-        
-    Returns:
-        str: 후보자 관점의 응답
-    """
-    # 후보자별 맞춤 프롬프트 생성
-    qa_prompt = get_prompt(candidate)
-    
-    # 후보자별 qa_chain 업데이트
-    qa_chain = (
-        {"context": retriever, "question": RunnablePassthrough()}
-        | qa_prompt
-        | llm
-        | StrOutputParser()
-    )
-    
-    # 대화 이력에 따라 적절한 질문 처리 방식 선택
-    if memory.buffer == "":
-        return ask_question(question, qa_chain)
-    else:
-        return ask_followup_question(question, qa_chain)
-
-# 후보자별 컨텍스트 검색 함수 추가
-async def retrieve_candidate_policies(candidate):
-    """
-    특정 후보자에 해당하는 정책/공약 정보를 검색합니다.
-    
-    Args:
-        candidate: 후보자 이름 또는 ID
-        
-    Returns:
-        str: 후보자 정책 컨텍스트
-    """
-    # 후보자 ID 또는 이름으로 정책 검색 로직 구현
-    # 이 함수는 데이터베이스나 벡터 스토어에서 해당 후보의 정책만 필터링하여 가져올 수 있음
-    # 실제 구현은 데이터 구조에 따라 달라질 수 있음
-    
-    # 예시 (실제로는 DB 쿼리나 벡터 검색 필요)
-    candidate_name = candidate.name if hasattr(candidate, 'name') else candidate
-    
-    # 벡터 스토어에서 후보자 이름 기반으로 관련 정책 검색 (예시)
-    candidate_filter = {"metadata": {"candidate": candidate_name}}
-    # retriever를 후보자 기반으로 필터링하는 코드 (실제 구현 필요)
-    
-    return f"이 컨텍스트는 {candidate_name} 후보의 정책과 공약 정보입니다."
 
 # 기존 AI 응답 생성 함수
 async def get_ai_response(question: str, policies: Optional[List[Policy]] = None) -> ChatResponse:
@@ -423,8 +411,49 @@ def search_documents(query: str, candidate=None, k=5):
         print(f"문서 검색 오류: {e}")
         return [], None, []
 
+def chatbot(question, candidate, conversation_history=None):
+    """
+    후보자별 맞춤형 챗봇 응답을 생성합니다.
+    
+    Args:
+        question: 사용자 질문
+        candidate: 후보자 이름 또는 후보자 객체
+        conversation_history: 이전 대화 이력 (선택 사항)
+        
+    Returns:
+        str: 후보자 관점의 응답
+    """
+    # 후보자별 맞춤 프롬프트 생성
+    qa_prompt = get_prompt(candidate)
+    
+    # 후보자별 qa_chain 업데이트
+    qa_chain = (
+        {"context": retriever, "question": RunnablePassthrough()}
+        | qa_prompt
+        | llm
+        | StrOutputParser()
+    )
+    
+    # 대화 이력이 있으면 메모리에 로드
+    if conversation_history:
+        # 메모리 초기화
+        memory.clear()
+        
+        # 대화 이력을 메모리에 추가
+        for i in range(0, len(conversation_history), 2):
+            if i+1 < len(conversation_history):
+                user_msg = conversation_history[i].content
+                ai_msg = conversation_history[i+1].content
+                memory.write_context({"human": user_msg}, {"ai": ai_msg})
+    
+    # 대화 이력에 따라 적절한 질문 처리 방식 선택
+    if memory.buffer == "":
+        return ask_question(question, qa_chain)
+    else:
+        return ask_followup_question(question, qa_chain)
+
 # 문서 컨텍스트와 함께 챗봇 응답 생성
-def chatbot_with_docs(question: str, candidate, documents):
+def chatbot_with_docs(question: str, candidate, documents, conversation_history=None):
     """
     검색된 문서들을 컨텍스트로 활용하여 챗봇 응답을 생성합니다.
     
@@ -432,6 +461,7 @@ def chatbot_with_docs(question: str, candidate, documents):
         question: 사용자 질문
         candidate: 후보자 이름 또는 객체
         documents: 검색된 문서 리스트
+        conversation_history: 이전 대화 이력 (선택 사항)
         
     Returns:
         str: 생성된 응답
@@ -459,9 +489,38 @@ def chatbot_with_docs(question: str, candidate, documents):
             else:
                 context = "알고투표 정책 정보입니다."
         
-        # 컨텍스트를 직접 사용하는 간단한 방식으로 처리 
-        print("LLM에 질문 전송 시작...")
-        formatted_prompt = qa_prompt.format(context=context, question=question)
+        # 대화 이력이 있으면 메모리에 로드
+        if conversation_history:
+            # 메모리 초기화
+            memory.clear()
+            
+            # 대화 이력을 메모리에 추가
+            for msg in conversation_history:
+                if msg.role == "user":
+                    user_msg = msg.content
+                    # 짝이 되는 assistant 메시지 찾기
+                    for resp_msg in conversation_history:
+                        if resp_msg.role == "assistant" and conversation_history.index(resp_msg) > conversation_history.index(msg):
+                            memory.write_context({"human": user_msg}, {"ai": resp_msg.content})
+                            break
+            
+            print(f"대화 이력 로드 완료: {len(conversation_history)} 메시지")
+            
+            # 대화 이력 있으면 후속 질문으로 처리
+            if memory.buffer:
+                print("대화 이력 활용하여 contextualized question 생성")
+                contextualized_question = rewrite_chain.run(question=question)
+                print(f"Rewritten question: {contextualized_question}")
+                
+                # 컨텍스트와 재작성된 질문으로 프롬프트 포맷팅
+                formatted_prompt = qa_prompt.format(context=context, question=contextualized_question)
+            else:
+                # 대화 이력 없으면 일반 질문으로 처리
+                formatted_prompt = qa_prompt.format(context=context, question=question)
+        else:
+            # 대화 이력 없으면 일반 질문으로 처리
+            formatted_prompt = qa_prompt.format(context=context, question=question)
+        
         print(f"포맷된 프롬프트: {formatted_prompt[:100]}...")
         
         # 직접 LLM 호출
@@ -478,14 +537,15 @@ def chatbot_with_docs(question: str, candidate, documents):
         print(f"chatbot_with_docs 오류: {e}")
         return f"죄송합니다. 답변을 생성하는 중 오류가 발생했습니다: {str(e)}"
 
-# RAG 기반 응답 생성 함수 (새로운 함수)
-async def get_rag_response(question: str, candidate=None) -> ChatResponse:
+# RAG 기반 응답 생성 함수
+async def get_rag_response(question: str, candidate=None, conversation_history=None) -> ChatResponse:
     """
-    RAG 방식으로 질문에 답변하는 새로운 함수
+    RAG 방식으로 질문에 답변하는 함수
     
     Args:
         question: 사용자 질문
         candidate: 후보자 이름 또는 후보자 객체 (기본값: None)
+        conversation_history: 이전 대화 이력 (선택 사항)
         
     Returns:
         ChatResponse: 챗봇 응답 객체
@@ -495,7 +555,7 @@ async def get_rag_response(question: str, candidate=None) -> ChatResponse:
         documents, source_metadata, related_policies = search_documents(question, candidate)
         
         # 검색된 문서를 활용하여 RAG 체인으로 답변 생성
-        answer_text = chatbot_with_docs(question, candidate, documents)
+        answer_text = chatbot_with_docs(question, candidate, documents, conversation_history)
         
         # 검색된 메타데이터가 없을 경우 기본값 사용
         if not source_metadata:

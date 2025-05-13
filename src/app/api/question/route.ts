@@ -23,7 +23,7 @@ const fetchWithTimeout = async (url: string, options: RequestInit, timeout = 200
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { question, match_count } = body;
+    const { question, match_count, conversation_history } = body;
 
     console.log(`Sending request to backend: ${BACKEND_URL}/api/question`);
 
@@ -41,6 +41,8 @@ export async function POST(request: NextRequest) {
           question,
           match_count,
           candidate_ids: body.candidate_ids || [],
+          candidate: body.candidate || null,
+          conversation_history: conversation_history || null
         }),
         cache: 'no-store'
       },

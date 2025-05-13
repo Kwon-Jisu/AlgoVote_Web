@@ -5,20 +5,24 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { nanoid } from "nanoid";
 import { candidates } from "@/data/candidates";
-import { ChatMessage } from "@/types";
 import ReactMarkdown from "react-markdown";
+import React from 'react';
 
-// API 응답 타입 정의
-interface PolicyInfo {
-  id: number;
-  candidate_id: number;
-  title: string;
-  category: string;
+// 필요한 타입 정의
+interface SourceMetadata {
+  page?: number;
+  source?: string;
+  creationDate?: string;
 }
 
 interface ApiResponse {
   answer: string;
-  related_policies: PolicyInfo[];
+  related_policies?: {
+    id: number;
+    candidate_id: number;
+    title: string;
+    category: string;
+  }[];
   source_metadata?: {
     page: number;
     source: string;
@@ -26,13 +30,30 @@ interface ApiResponse {
   };
 }
 
+interface ChatMessage {
+  id: string;
+  role: "user" | "bot";
+  content: string;
+  timestamp: Date;
+  candidateId?: string | number;
+  sourceDescription?: string;
+  sourceUrl?: string;
+  sourceMetadata?: SourceMetadata;
+}
+
 // RAG API 호출 함수
-async function fetchRagResponse(question: string, candidateInfo: string) {
+async function fetchRagResponse(question: string, candidateInfo: string, conversationHistory: ChatMessage[] = []) {
   // API 요청 타임아웃 설정 (45초)
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 45000);
 
   try {
+    // 대화 이력 변환 (백엔드 형식으로)
+    const formattedHistory = conversationHistory.map(msg => ({
+      role: msg.role === 'user' ? 'user' : 'assistant',
+      content: msg.content
+    }));
+
     const response = await fetch(`/api/question`, {
       method: "POST",
       headers: {
@@ -42,6 +63,8 @@ async function fetchRagResponse(question: string, candidateInfo: string) {
       body: JSON.stringify({
         question: `${candidateInfo} ${question}`,
         match_count: 5,
+        candidate: candidateInfo.split(' ')[0], // 후보자 이름 추출
+        conversation_history: formattedHistory
       }),
       signal: controller.signal,
     });
@@ -134,11 +157,15 @@ export default function ChatbotCandidatePage() {
     setInputValue("");
     
     try {
-      // RAG API 호출
-      const response = await fetchRagResponse(content, candidateInfo);
+      // 필터링된 대화 이력 준비 (최근 10개 메시지만)
+      // 대화 문맥을 유지하기 위해 적절한 수의 최근 메시지만 사용
+      const recentMessages = messages.slice(-10);
+      
+      // RAG API 호출 (대화 이력 포함)
+      const response = await fetchRagResponse(content, candidateInfo, recentMessages);
       
       // 적절한 출처 설명 생성
-      let sourceDescription = "2024 대선 공약집";
+      let sourceDescription = undefined;
       let sourceUrl = undefined;
       
       if (response.source_metadata) {
@@ -149,8 +176,8 @@ export default function ChatbotCandidatePage() {
         
         // 페이지 번호가 있으면 출처에 포함
         sourceDescription = page > 0
-          ? `${sourceFileName} 공약집 ${page}페이지`
-          : `${sourceFileName} 공약집`;
+          ? `${sourceFileName}(${page}페이지)`
+          : sourceFileName;
         
         // sourceUrl 는 나중에 실제 PDF 링크로 대체 가능
         sourceUrl = undefined;

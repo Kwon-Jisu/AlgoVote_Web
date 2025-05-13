@@ -123,13 +123,21 @@ async def safe_api_call(
     api_func: Callable[[str, Any], Awaitable[ChatResponse]], 
     question: str, 
     extra_param: Any = None,
+    conversation_history: Optional[List] = None,
     *args, **kwargs
 ) -> ChatResponse:
     """
     안전한 API 호출 처리를 위한 래퍼 함수
     """
     try:
-        if extra_param is not None:
+        if conversation_history is not None:
+            # 대화 이력이 있는 경우
+            if extra_param is not None:
+                return await api_func(question, extra_param, conversation_history, *args, **kwargs)
+            else:
+                return await api_func(question, None, conversation_history, *args, **kwargs)
+        elif extra_param is not None:
+            # 대화 이력이 없는 경우
             return await api_func(question, extra_param, *args, **kwargs)
         else:
             return await api_func(question, *args, **kwargs)
@@ -185,7 +193,12 @@ async def rag_chat(request: ChatRequest, background_tasks: BackgroundTasks):
     RAG 기반 챗봇 API (Supabase 벡터 스토어 활용)
     """
     logger.info(f"RAG 질문 받음: {request.question}")
-    return await safe_api_call(get_rag_response, request.question, request.candidate)
+    return await safe_api_call(
+        get_rag_response, 
+        request.question, 
+        request.candidate,
+        request.conversation_history
+    )
 
 # 레거시 호환 API 엔드포인트
 @app.post("/api/question", response_model=ChatResponse)
@@ -194,7 +207,12 @@ async def answer_question(request: ChatRequest, background_tasks: BackgroundTask
     이전 버전 호환성을 위한 API 엔드포인트 (현재는 RAG 방식으로 처리)
     """
     logger.info(f"API 질문 받음: {request.question}")
-    return await safe_api_call(get_rag_response, request.question, request.candidate)
+    return await safe_api_call(
+        get_rag_response, 
+        request.question, 
+        request.candidate,
+        request.conversation_history
+    )
 
 # 레거시 Predict 엔드포인트 - RAG 방식으로 통합
 @app.post("/predict", response_model=ChatResponse)
@@ -203,7 +221,12 @@ async def predict(request: ChatRequest):
     다른 형식의 레거시 엔드포인트 (RAG 방식으로 통합)
     """
     logger.info(f"Predict 질문 받음: {request.question}")
-    return await safe_api_call(get_rag_response, request.question, request.candidate)
+    return await safe_api_call(
+        get_rag_response, 
+        request.question, 
+        request.candidate,
+        request.conversation_history
+    )
 
 if __name__ == "__main__":
     import uvicorn
