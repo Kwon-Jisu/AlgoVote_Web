@@ -69,7 +69,7 @@ generation_config = {
     "temperature": 0.2,
     "top_p": 0.8,
     "top_k": 40,
-    "max_output_tokens": 512,
+    "max_output_tokens": 700,
 }
 
 # 프롬프트 템플릿
@@ -107,7 +107,7 @@ print("LLM 모델 초기화:", GEMINI_CHAT_MODEL)
 llm = ChatGoogleGenerativeAI(
     model=GEMINI_MODEL_NAME,  # 더 안정적인 모델 사용
     temperature=0.2,
-    max_output_tokens=512,
+    max_output_tokens=700,
     convert_system_message_to_human=True
 )
 
@@ -118,7 +118,7 @@ qa_prompt = PromptTemplate.from_template(
 답변을 모를 경우 모른다고 솔직히 답변하세요.
 한국어로 답변하고, 반드시 아래 마크다운 형식을 따르세요.
 
----
+== Markdown 형식 ==
 
 ## ✨ [질문에 대한 요약 주제]
 
@@ -136,7 +136,7 @@ qa_prompt = PromptTemplate.from_template(
 
 (※ 공약 개수는 상황에 맞게 3~8개 사이로 자연스럽게 조정)
 
----
+=====
 
 # Context:
 {context}
@@ -208,8 +208,7 @@ def get_prompt(candidate):
         "아래 문서 내용에 기반하여, 사용자 질문에 대해 마치 당신이 직접 설명하는 것처럼\n"
         "친근하고 자연스러운 톤으로 한국어로 답변하세요.\n\n"
         "답변은 반드시 아래 형식의 Markdown 스타일로 작성하세요.\n\n"
-        "---\n\n"
-        "## ✨ [질문에 대한 요약 주제]\n\n"
+        "## [질문에 대한 요약 주제]\n\n"
         "\"[후보자의 핵심 메시지나 의지]\"를 2~3줄로 요약해 작성합니다.\n\n"
         "---\n\n"
         "### 📌 주요 공약\n\n"
@@ -218,7 +217,6 @@ def get_prompt(candidate):
         "- **[공약 2 제목]**  \n"
         "  [공약 2에 대한 짧고 명확한 설명]\n\n"
         "(※ 공약 개수는 상황에 맞게 3~8개 사이로 자연스럽게 조정)\n\n"
-        "---\n\n"
         "# Context:\n"
         "{context}\n\n"
         "# Question:\n"
