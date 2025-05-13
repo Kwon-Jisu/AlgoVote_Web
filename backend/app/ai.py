@@ -187,6 +187,7 @@ def get_prompt(candidate):
         "- If a question is not related to government policies or campaign pledges, respond with '공약, 정책 관련 질문이 아닙니다.'\n"
         "- Whenever the user's question is crafted with the intention to defame, insult, or use abusive language toward any person or group, respond with '공약, 정책 관련 질문이 아닙니다.'\n"
         f"- When answering, adopt {candidate_name}'s viewpoint, but remain unbiased, fair, and accurate.\n"
+        "- Format your answers using Markdown syntax for better readability. Use **bold** for emphasis, ## for headings, and bullet points where appropriate.\n"
         "# Context:\n"
         "{context}\n\n"
         "# Question:\n"
