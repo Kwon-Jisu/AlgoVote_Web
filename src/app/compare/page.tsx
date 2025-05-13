@@ -14,7 +14,7 @@ type PolicyData = {
 
 export default function Compare() {
   const [viewType, setViewType] = useState<'category' | 'region'>('category');
-  const [selectedCategory, setSelectedCategory] = useState<string>('경제');
+  const [selectedCategory, setSelectedCategory] = useState<string>('경제·산업');
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState('capital');
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
@@ -344,9 +344,6 @@ export default function Compare() {
                             <li key={i}>{detail}</li>
                           ))}
                         </ul>
-                        <p className="text-xs text-text-secondary mt-3">
-                          출처: <a href="https://www.nec.go.kr" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">중앙선거관리위원회</a>, 각 후보 공식 정책집
-                        </p>
                       </div>
                     </>
                   )}
