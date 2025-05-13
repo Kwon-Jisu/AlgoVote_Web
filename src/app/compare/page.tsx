@@ -189,7 +189,7 @@ export default function Compare() {
 
   return (
     <div className="bg-background min-h-screen">
-      <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12 fade-in">
+      <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-0 fade-in">
         <h1 className="text-3xl font-bold text-text-primary text-start mb-10">공약 비교하기</h1>
         
         {/* 비교 기준 선택 영역 */}
@@ -599,7 +599,7 @@ export default function Compare() {
         </div>
 
         {/* 출처 및 업데이트 정보 */}
-        <div className="mt-10 text-xs text-text-secondary border-t border-divider pt-4">
+        <div className="mt-10 text-xs md:text-xs sm:text-[10px] text-[9px] text-text-secondary border-t border-divider pt-4">
           <p>
             ※ 본 정보는 <a href="https://www.nec.go.kr" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">중앙선거관리위원회</a>, 
             각 후보 선거캠프 공식 발표 자료를 기반으로 작성되었습니다.
@@ -617,8 +617,8 @@ export default function Compare() {
               </React.Fragment>
             ))}
           </p>
-          <p>※ 최종 업데이트: 2025년 5월 기준</p>
-          <p>※ 각 후보의 정책은 선거 과정에서 변경될 수 있으며, 가장 정확한 정보는 후보 공식 웹사이트를 참고하시기 바랍니다.</p>
+          <p className="mt-1">※ 최종 업데이트: 2025년 5월 기준</p>
+          <p className="mt-1">※ 각 후보의 정책은 선거 과정에서 변경될 수 있으며, 가장 정확한 정보는 후보 공식 웹사이트를 참고하시기 바랍니다.</p>
         </div>
       </main>
     </div>
