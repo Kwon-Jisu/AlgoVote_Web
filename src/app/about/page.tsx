@@ -184,10 +184,19 @@ export default function About() {
                   href="https://www.buymeacoffee.com/daino_saur" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center px-6 py-3 bg-[#FFDD00] text-black font-bold rounded-lg shadow-md hover:shadow-lg transform hover:translate-y-[-2px] transition-all duration-300"
+                  className="group relative inline-flex items-center px-6 py-3 bg-[#FFDD00] text-black font-bold rounded-lg shadow-md hover:shadow-lg transform hover:translate-y-[-2px] transition-all duration-300 overflow-hidden"
                 >
-                  <span className="mr-2">☕</span>
-                  <span className="font-['Inter'] text-base">Buy me a coffee</span>
+                  <span className="mr-2 relative z-10">☕</span>
+                  <span className="font-['Inter'] text-base relative z-10">Buy me a coffee</span>
+                  
+                  {/* 하트 이펙트 */}
+                  <span className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="absolute -top-2 -left-1 text-lg text-red-500 animate-float-up-left">❤️</span>
+                    <span className="absolute -top-2 left-1/4 text-lg text-red-500 animate-float-up delay-75">❤️</span>
+                    <span className="absolute -top-2 left-2/4 text-lg text-red-500 animate-float-up-right delay-150">❤️</span>
+                    <span className="absolute -top-2 right-1/4 text-lg text-red-500 animate-float-up delay-225">❤️</span>
+                    <span className="absolute -top-2 -right-1 text-lg text-red-500 animate-float-up-left delay-300">❤️</span>
+                  </span>
                 </a>
               </div>
             </div>

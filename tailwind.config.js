@@ -70,6 +70,31 @@ module.exports = {
         'column-gap': '24px', // Column 간격
         'vertical-gap': '80px', // 콘텐츠 간 수직 여백
       },
+      keyframes: {
+        'float-up': {
+          '0%': { transform: 'translateY(0)', opacity: 1 },
+          '100%': { transform: 'translateY(-20px)', opacity: 0 }
+        },
+        'float-up-left': {
+          '0%': { transform: 'translate(0, 0)', opacity: 1 },
+          '100%': { transform: 'translate(-10px, -20px)', opacity: 0 }
+        },
+        'float-up-right': {
+          '0%': { transform: 'translate(0, 0)', opacity: 1 },
+          '100%': { transform: 'translate(10px, -20px)', opacity: 0 }
+        },
+      },
+      animation: {
+        'float-up': 'float-up 1.5s ease-out forwards',
+        'float-up-left': 'float-up-left 1.5s ease-out forwards',
+        'float-up-right': 'float-up-right 1.5s ease-out forwards',
+      },
+      transitionDelay: {
+        '75': '75ms',
+        '150': '150ms',
+        '225': '225ms',
+        '300': '300ms',
+      }
     },
   },
   plugins: [
