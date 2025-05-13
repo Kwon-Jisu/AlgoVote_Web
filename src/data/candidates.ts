@@ -16,7 +16,7 @@ export const candidates: Candidate[] = [
     career: ['제20대 더불어민주당 대선 후보', '전 경기도지사', '전 성남시장'],
     slogan: '지속 가능한 미래를 위한 혁신',
     profileImage: '/images/candidates/lee-jaemyung.jpg',
-    websiteUrl: 'https://www.candidate-website.kr',
+    websiteUrl: 'https://theminjoo.kr/main/sub/news/list.php?brd=254',
   },
   {
     id: 'kim-moonsoo',
@@ -28,7 +28,7 @@ export const candidates: Candidate[] = [
     career: ['제20대 국민의힘 대선 경선 후보', '전 자유한국당 대표', '전 경상남도지사'],
     slogan: '국민과 함께하는 새로운 정치',
     profileImage: '/images/candidates/kim-moonsoo.jpg',
-    websiteUrl: 'https://www.candidate-website.kr',
+    websiteUrl: 'https://2025victory.kr/sub/?h_page=promise',
   },
   {
     id: 'lee-junseok',
@@ -40,7 +40,7 @@ export const candidates: Candidate[] = [
     career: ['제20대 국민의힘 대표', '전 미래통합당 최고위원', '전 한국미래연합 공동대표'],
     slogan: '경제 성장과 사회 안정을 위해',
     profileImage: '/images/candidates/lee-junseok.jpg',
-    websiteUrl: 'https://www.candidate-website.kr',
+    websiteUrl: 'https://www.reformparty.kr/policy',
   },
 ];
 
