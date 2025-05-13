@@ -39,7 +39,7 @@ const teamMembers: TeamMember[] = [
     name: '양지은',
     role: 'Data',
     image: '/images/team/yang-jiyeon.jpg',
-    linkedin: 'https://www.linkedin.com/in/crystal?utm_source=algotovote.com&utm_medium=referral&utm_campaign=about-page'
+    linkedin: 'https://www.linkedin.com/in/je-y-8282a8365?utm_source=algotovote.com&utm_medium=referral&utm_campaign=about-page'
   }
 ];
 
@@ -80,7 +80,7 @@ export default function About() {
                 rel="noopener noreferrer"
                 className="flex flex-col items-center text-center cursor-pointer group"
               >
-                <div className="relative w-full pb-[100%] bg-[#E5E7EB] rounded-2xl overflow-hidden mb-4">
+                <div className="relative w-full pb-[100%] bg-[#E5E7EB] rounded-2xl overflow-hidden mb-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
                   {/* 링크드인 아이콘 */}
                   {member.linkedin && (
                     <div 
