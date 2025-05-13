@@ -138,12 +138,6 @@ qa_prompt = PromptTemplate.from_template(
 
 ---
 
-### 📄 출처
-
-- [사용된 공약 문서 출처 및 링크]
-
----
-
 # Context:
 {context}
 
@@ -224,9 +218,6 @@ def get_prompt(candidate):
         "- **[공약 2 제목]**  \n"
         "  [공약 2에 대한 짧고 명확한 설명]\n\n"
         "(※ 공약 개수는 상황에 맞게 3~8개 사이로 자연스럽게 조정)\n\n"
-        "---\n\n"
-        "### 📄 출처\n\n"
-        "- [사용된 공약 문서 출처 및 링크]\n\n"
         "---\n\n"
         "# Context:\n"
         "{context}\n\n"
