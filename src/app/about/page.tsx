@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { TeamMember } from '@/types';
 
@@ -44,6 +44,39 @@ const teamMembers: TeamMember[] = [
 ];
 
 export default function About() {
+  useEffect(() => {
+    // 기존 스크립트 제거
+    const existingScript = document.getElementById('bmc-script');
+    if (existingScript) {
+      existingScript.remove();
+    }
+    
+    // 새 스크립트 생성
+    const script = document.createElement('script');
+    script.id = 'bmc-script';
+    script.type = 'text/javascript';
+    script.src = 'https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js';
+    script.dataset.name = 'bmc-button';
+    script.dataset.slug = 'daino_saur';
+    script.dataset.color = '#FFDD00';
+    script.dataset.emoji = '☕';
+    script.dataset.font = 'Inter';
+    script.dataset.text = 'Buy me a coffee';
+    script.dataset.outlineColor = '#000000';
+    script.dataset.fontColor = '#000000';
+    script.dataset.coffeeColor = '#ffffff';
+    script.async = true;
+    
+    // 스크립트 추가
+    document.body.appendChild(script);
+    
+    return () => {
+      if (script && script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+  }, []);
+
   return (
     <div className="bg-white min-h-screen">
       <main className="pt-18 sm:pt-24 pb-16">
@@ -142,21 +175,24 @@ export default function About() {
           <div className="container mx-auto px-4 md:px-6 max-w-3xl">
             <div className="text-center mb-8">
               <h2 className="text-xl md:text-2xl font-bold text-text-primary mb-4">작은 응원이 다음 프로젝트를 만듭니다.</h2>
-              <p className="text-text-secondary mb-6">
+              <p className="text-text-secondary mb-8">
                 알고투표는 비영리 프로젝트로 운영되고 있습니다.<br />
                 여러분의 작은 후원이 더 나은 민주주의 도구를 만드는 데 큰 힘이 됩니다.
               </p>
-              <button className="bg-white text-text-primary border border-divider hover:bg-gray-100 transition-colors px-6 py-3 rounded-button font-medium flex items-center mx-auto whitespace-nowrap">
-                <div className="w-6 h-6 flex items-center justify-center mr-2">
-                  <i className="ri-cup-line"></i>
-                </div>
-                Buy Me a Coffee
-              </button>
+              <div className="flex justify-center">
+                <a 
+                  href="https://www.buymeacoffee.com/daino_saur" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center px-6 py-3 bg-[#FFDD00] text-black font-bold rounded-lg shadow-md hover:shadow-lg transform hover:translate-y-[-2px] transition-all duration-300"
+                >
+                  <span className="mr-2">☕</span>
+                  <span className="font-['Inter'] text-base">Buy me a coffee</span>
+                </a>
+              </div>
             </div>
           </div>
         </section>
-
-        
       </main>
     </div>
   );
