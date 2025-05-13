@@ -17,7 +17,6 @@ export default function Compare() {
   const [selectedCategory, setSelectedCategory] = useState<string>('경제·산업');
   const [selectedSubCategory, setSelectedSubCategory] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState('capital');
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -107,13 +106,6 @@ export default function Compare() {
     setSelectedSubCategory(subCategory);
   };
 
-  const toggleItemExpand = (candidateId: string, policyId: string) => {
-    const key = `${candidateId}-${policyId}`;
-    setExpandedItems(prev => ({
-      ...prev,
-      [key]: !prev[key]
-    }));
-  };
 
   // 슬라이드 변경 처리
   const handleSlideChange = (index: number) => {

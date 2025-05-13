@@ -1,4 +1,4 @@
-import { Candidate, Pledge, Statement, QnA } from '@/types';
+import { Candidate, Pledge} from '@/types';
 
 /**
  * 후보자 ID로 후보자 정보 찾기
