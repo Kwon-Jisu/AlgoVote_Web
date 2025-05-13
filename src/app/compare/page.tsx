@@ -9,7 +9,6 @@ import RegionalPolicyCard from '@/components/regional-policy-card';
 // 서브 카테고리 정책 데이터 타입 정의
 type PolicyData = {
   title: string;
-  content: string;
   details: string[];
 };
 
@@ -308,8 +307,8 @@ export default function Compare() {
             </div>
           )}
 
-          {/* 서브 카테고리 정책 비교 표시 */}
-          {selectedSubCategory && subCategoryPolicyData.length > 0 ? (
+          
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
               {subCategoryPolicyData.map(({ candidate, policyData }) => (
                 <div 
@@ -337,9 +336,6 @@ export default function Compare() {
                   {policyData && (
                     <>
                       <h4 className="text-lg font-medium text-primary mb-3">{policyData.title}</h4>
-                      <div className="pl-3 border-l-2 border-primary mb-4">
-                        <p className="text-text-primary">{policyData.content}</p>
-                      </div>
                       
                       <div className="bg-gray-50 p-4 rounded-lg mt-4">
                         <h5 className="font-medium text-text-primary mb-3">상세 정책</h5>
@@ -357,182 +353,14 @@ export default function Compare() {
                 </div>
               ))}
             </div>
-          ) : (
-            // 세부 정책 항목 탭 (기존 코드)
-            <>
-              <div className="overflow-x-auto whitespace-nowrap pb-2 mb-6 border-b border-divider">
-                <div className="flex space-x-4">
-                  {policyItems.map((item, index) => (
-                    <div key={item.id} className="relative">
-                      <button 
-                        className={`px-5 py-3 text-sm font-medium rounded-t-lg border-b-2 transition-all ${
-                          activeSlideIndex === index 
-                            ? 'border-primary text-primary bg-primary bg-opacity-5 font-bold' 
-                            : 'border-transparent text-text-secondary hover:text-text-primary hover:bg-gray-50'
-                        }`}
-                        onClick={() => handleSlideChange(index)}
-                      >
-                        {item.title}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* 슬라이드 컨테이너 */}
-              <div 
-                ref={sliderRef}
-                className="overflow-x-auto snap-x snap-mandatory flex w-full"
-                style={{ 
-                  scrollSnapType: 'x mandatory',
-                  scrollbarWidth: 'none',
-                  msOverflowStyle: 'none',
-                  minHeight: '500px'
-                }}
-              >
-                {policyItems.map((item) => (
-                  <div 
-                    key={item.id}
-                    className="min-w-full w-full snap-center flex flex-col"
-                    style={{ scrollSnapAlign: 'start' }}
-                  >
-                    <div className="mb-6">
-                      <h3 className="text-2xl font-semibold text-text-primary">{item.title}</h3>
-                      <div className="w-20 h-1 bg-primary mt-2 rounded-full"></div>
-                    </div>
-
-                    {/* 후보자별 정책 카드 - 가로 배열 */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                      {candidates.slice(0, 3).map((candidate) => {
-                        // 해당 후보의 정책 찾기
-                        const policy = item.policies.find(p => p.candidateId === candidate.id);
-                        const isExpanded = expandedItems[`${candidate.id}-${item.id}`];
-                        
-                        return (
-                          <div key={`${candidate.id}-${item.id}`} className="bg-white rounded-xl shadow-sm p-5 border border-divider hover:shadow-md transition-shadow flex flex-col min-h-[200px]">
-                            <div className="flex items-center mb-4">
-                              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden mr-3">
-                                {candidate.profileImage && (
-                                  <Image 
-                                    src={candidate.profileImage} 
-                                    alt={candidate.name}
-                                    width={48}
-                                    height={48}
-                                    className="w-full h-full object-cover"
-                                  />
-                                )}
-                              </div>
-                              <div>
-                                <h4 className="font-semibold text-lg">{candidate.name}</h4>
-                                <p className="text-text-secondary text-sm">{candidate.party}</p>
-                              </div>
-                            </div>
-
-                            {policy ? (
-                              <>
-                                <div className="pl-3 border-l-2 border-primary mb-4">
-                                  <p className="text-text-primary">{policy.summary}</p>
-                                </div>
-
-                                <div className={`transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[600px]' : 'max-h-0'}`}>
-                                  {policy.details.length > 0 && (
-                                    <div className="space-y-3 bg-gray-50 p-4 rounded-lg">
-                                      <h5 className="font-medium text-text-primary">상세 공약</h5>
-                                      <ul className="list-disc pl-5 text-text-secondary">
-                                        {policy.details.map((detail, i) => (
-                                          <li key={i} className="mb-2">{detail}</li>
-                                        ))}
-                                      </ul>
-                                      <p className="text-xs text-text-secondary mt-3">
-                                        출처: <a href={candidate.websiteUrl || "#"} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{policy.source}</a>
-                                      </p>
-                                    </div>
-                                  )}
-                                </div>
-
-                                <button
-                                  onClick={() => toggleItemExpand(candidate.id, item.id)}
-                                  className="text-primary flex items-center text-sm hover:underline mt-auto pt-4"
-                                >
-                                  {isExpanded ? (
-                                    <>
-                                      <span>접기</span>
-                                      <i className="ri-arrow-up-s-line ml-1"></i>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <span>더보기</span>
-                                      <i className="ri-arrow-down-s-line ml-1"></i>
-                                    </>
-                                  )}
-                                </button>
-                              </>
-                            ) : (
-                              <div className="flex-1 flex items-center justify-center text-text-secondary italic">
-                                이 정책에 대한 공약이 없습니다
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* 페이지 인디케이터 */}
-              <div className="flex flex-col items-center justify-center mt-8">
-                <div className="flex items-center justify-center space-x-3 mb-2">
-                  <button
-                    onClick={() => activeSlideIndex > 0 && handleSlideChange(activeSlideIndex - 1)}
-                    className={`w-8 h-8 flex items-center justify-center rounded-full ${
-                      activeSlideIndex > 0 
-                        ? 'text-primary hover:bg-primary hover:bg-opacity-10' 
-                        : 'text-gray-300 cursor-not-allowed'
-                    }`}
-                    disabled={activeSlideIndex === 0}
-                  >
-                    <i className="ri-arrow-left-s-line text-xl"></i>
-                  </button>
-                  <div className="flex justify-center space-x-2">
-                    {policyItems.map((_, index) => (
-                      <button
-                        key={index}
-                        className={`w-3 h-3 rounded-full transition-all ${
-                          activeSlideIndex === index 
-                            ? 'bg-primary scale-110' 
-                            : 'bg-gray-300 hover:bg-gray-400'
-                        }`}
-                        onClick={() => handleSlideChange(index)}
-                        aria-label={`슬라이드 ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                  <button
-                    onClick={() => activeSlideIndex < policyItems.length - 1 && handleSlideChange(activeSlideIndex + 1)}
-                    className={`w-8 h-8 flex items-center justify-center rounded-full ${
-                      activeSlideIndex < policyItems.length - 1 
-                        ? 'text-primary hover:bg-primary hover:bg-opacity-10' 
-                        : 'text-gray-300 cursor-not-allowed'
-                    }`}
-                    disabled={activeSlideIndex === policyItems.length - 1}
-                  >
-                    <i className="ri-arrow-right-s-line text-xl"></i>
-                  </button>
-                </div>
-                <p className="text-sm text-text-secondary">
-                  {activeSlideIndex + 1} / {policyItems.length}
-                </p>
-              </div>
-            </>
-          )}
+          
         </section>
 
         {/* 지역별 보기 섹션 */}
         <section id="region-section" className={`mb-8 ${viewType === 'region' ? 'block' : 'hidden'}`}>
           <div className="overflow-x-auto whitespace-nowrap pb-4 mb-6">
             <div className="flex space-x-3">
-              {['capital', 'chungcheong', 'yeongnam', 'honam', 'gangwon', 'jeju'].map((region) => (
+              {['capital', 'chungcheong', 'yeongnam', 'honam', 'gangwon', 'jeju', 'border'].map((region) => (
                 <div key={region} className="relative">
                   <input 
                     type="radio" 
@@ -556,6 +384,7 @@ export default function Compare() {
                     {region === 'honam' && '호남'}
                     {region === 'gangwon' && '강원'}
                     {region === 'jeju' && '제주'}
+                    {region === 'border' && '접경지'}
                   </label>
                 </div>
               ))}

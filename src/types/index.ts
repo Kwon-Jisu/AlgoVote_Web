@@ -17,9 +17,9 @@ export interface Pledge {
   title: string;
   summary: string;
   category: string;
-  background: string;
+  background: string[] | string;
   content: string[];
-  implementation: string;
+  implementation: string[] | string;
   period: string;
   funding: string;
   order: number;
