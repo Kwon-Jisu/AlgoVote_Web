@@ -1,0 +1,16 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# 사이트맵 위치
+Sitemap: https://www.algovote.kr/sitemap.xml
+
+# 중요 페이지는 크롤링 허용
+Allow: /candidates/
+Allow: /compare
+Allow: /about
+
+# 캐시 및 임시 파일 제외
+Disallow: /api/
+Disallow: /_next/static/
+Disallow: /_next/image/ 
