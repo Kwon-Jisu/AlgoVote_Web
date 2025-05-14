@@ -1,7 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { getDataLogs, type DataLog } from '@/lib/supabase';
+import { getDataLogs } from '@/lib/supabase';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -19,7 +17,7 @@ async function DataLogPage() {
       <h1 className="text-3xl font-bold mb-4">📚 데이터 업데이트 로그</h1>
       
       <p className="text-text-secondary mb-8">
-        "알고투표는 모든 데이터 수집 및 갱신 과정을 투명하게 기록하고 있습니다."
+        &ldquo;알고투표는 모든 데이터 수집 및 갱신 과정을 투명하게 기록하고 있습니다.&rdquo;
       </p>
       
       <div className="mb-12">

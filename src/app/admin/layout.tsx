@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import AdminAuth from '@/components/admin/admin-auth';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: '관리자 페이지 | 알고투표',
@@ -26,19 +27,19 @@ export default function AdminLayout({
               <nav>
                 <ul className="flex space-x-6">
                   <li>
-                    <a href="/admin/data-log" className="hover:text-primary transition-colors">
+                    <Link href="/admin/data-log" className="hover:text-primary transition-colors">
                       데이터 로그
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="/admin/candidates" className="hover:text-primary transition-colors">
+                    <Link href="/admin/candidates" className="hover:text-primary transition-colors">
                       후보자 관리
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="/" className="hover:text-primary transition-colors">
+                    <Link href="/" className="hover:text-primary transition-colors">
                       사이트로 이동
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </nav>
