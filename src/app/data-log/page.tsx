@@ -24,22 +24,22 @@ async function DataLogPage() {
         <h2 className="text-2xl font-semibold mb-4">✅ 업데이트 기록</h2>
         
         <div className="overflow-x-auto">
-          <table className="min-w-full border-collapse">
+          <table className="w-full min-w-[800px] table-fixed border-collapse">
             <thead>
               <tr className="bg-background">
-                <th className="border border-divider p-3 text-left">업데이트 날짜</th>
-                <th className="border border-divider p-3 text-left">출처 기관</th>
-                <th className="border border-divider p-3 text-left">출처 링크</th>
-                <th className="border border-divider p-3 text-left">업데이트 대상</th>
-                <th className="border border-divider p-3 text-left">주요 변경사항 요약</th>
-                <th className="border border-divider p-3 text-left">비고</th>
+                <th className="border border-divider p-3 text-left w-[120px]">업데이트 날짜</th>
+                <th className="border border-divider p-3 text-left w-[150px]">출처 기관</th>
+                <th className="border border-divider p-3 text-left w-[100px]">출처 링크</th>
+                <th className="border border-divider p-3 text-left w-[150px]">업데이트 대상</th>
+                <th className="border border-divider p-3 text-left w-[200px]">주요 변경사항 요약</th>
+                <th className="border border-divider p-3 text-left w-[150px]">비고</th>
               </tr>
             </thead>
             <tbody>
               {dataLogs.length > 0 ? (
                 dataLogs.map((log) => (
                   <tr key={log.id}>
-                    <td className="border border-divider p-3">{new Date(log.update_date).toLocaleDateString('ko-KR')}</td>
+                    <td className="border border-divider p-3 whitespace-nowrap">{new Date(log.update_date).toLocaleDateString('ko-KR')}</td>
                     <td className="border border-divider p-3">{log.source_organization}</td>
                     <td className="border border-divider p-3">
                       <a 
@@ -53,7 +53,7 @@ async function DataLogPage() {
                     </td>
                     <td className="border border-divider p-3">{log.update_target}</td>
                     <td className="border border-divider p-3">{log.change_summary}</td>
-                    <td className="border border-divider p-3">{log.note}</td>
+                    <td className="border border-divider p-3 whitespace-normal">{log.note}</td>
                   </tr>
                 ))
               ) : (
