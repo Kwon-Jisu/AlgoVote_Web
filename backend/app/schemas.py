@@ -44,7 +44,10 @@ class ChatMessage(BaseModel):
 class SourceMetadata(BaseModel):
     page: int
     source: str
-    creation_date: Optional[str] = None
+    creation_date: str
+    source_name: str
+    source_link: str
+    candidate: str
 
 # AI 응답 스키마
 class ChatRequest(BaseModel):

@@ -242,84 +242,6 @@ def ask_followup_question(question: str, qa_chain) -> str:
     memory.write_context({"human": question}, {"ai": answer})
     return answer
 
-# 기존 AI 응답 생성 함수
-async def get_ai_response(question: str, policies: Optional[List[Policy]] = None) -> ChatResponse:
-    """
-    기존 Gemini 직접 호출 방식의 응답 생성 함수
-    """
-    if not GEMINI_API_KEY:
-        return create_error_response(ERROR_MESSAGE_API_KEY)
-    
-    policy_context = ""
-    related_policies = []
-    source_metadata = None
-
-    if policies and len(policies) > 0:
-        policy_context = "다음 정책들을 바탕으로 답변해주세요:\n\n"
-        
-        # 첫 번째 정책의 메타데이터를 기본 출처로 활용
-        first_policy = policies[0]
-        if hasattr(first_policy, 'meta_info') and first_policy.meta_info:
-            try:
-                metadata_dict = json.loads(first_policy.meta_info)
-                source_metadata = SourceMetadata(
-                    page=metadata_dict.get("page", 0),
-                    source=metadata_dict.get("source", DEFAULT_SOURCE),
-                    creation_date=metadata_dict.get("creationdate", "")
-                )
-            except (json.JSONDecodeError, AttributeError, KeyError) as e:
-                print(f"메타데이터 파싱 오류: {e}")
-        
-        for policy in policies:
-            policy_text = f"후보: {policy.candidate.name}, 제목: {policy.title}, 카테고리: {policy.category}, 내용: {policy.description}"
-            policy_context += policy_text + "\n\n"
-            related_policies.append({
-                "id": policy.id,
-                "candidate_id": policy.candidate_id,
-                "title": policy.title,
-                "category": policy.category
-            })
-    
-    if policy_context:
-        full_prompt = f"{SYSTEM_PROMPT}\n\n{policy_context}\n\n질문: {question}"
-    else:
-        full_prompt = f"{SYSTEM_PROMPT}\n\n질문: {question}"
-
-    try:
-        model = genai.GenerativeModel(
-            model_name=GEMINI_MODEL_NAME,
-            generation_config=generation_config,
-            safety_settings=safety_settings
-        )
-
-        # ⏱️ Gemini 호출에 타임아웃 설정
-        response = await asyncio.wait_for(
-            asyncio.to_thread(model.generate_content, full_prompt),
-            timeout=RESPONSE_TIMEOUT
-        )
-
-        answer_text = response.text if response.candidates and len(response.candidates) > 0 else "죄송합니다. 질문에 대한 답변을 생성할 수 없습니다. 다른 질문을 시도해주세요."
-
-        # 기본 출처 정보 설정
-        if not source_metadata:
-            source_metadata = SourceMetadata(
-                page=0,
-                source=DEFAULT_SOURCE,
-                creation_date=""
-            )
-
-        return ChatResponse(
-            answer=answer_text,
-            related_policies=related_policies,
-            source_metadata=source_metadata
-        )
-
-    except asyncio.TimeoutError:
-        return create_error_response(ERROR_MESSAGE_TIMEOUT)
-    
-    except Exception as e:
-        return create_error_response(f"{ERROR_MESSAGE_SERVER}: {str(e)}")
-
 # 벡터 검색 및 메타데이터 추출 함수
 def search_documents(query: str, candidate=None, k=5):
     """
@@ -368,14 +290,23 @@ def search_documents(query: str, candidate=None, k=5):
                     # 아직 메타데이터가 설정되지 않았으면 첫 번째 문서의 메타데이터 사용
                     if not source_metadata:
                         metadata = doc.metadata
-                        source_name = metadata.get('source', DEFAULT_SOURCE)
+                        
+                        # 새로운 메타데이터 형식 처리
+                        source_name = metadata.get('source_name', metadata.get('source', DEFAULT_SOURCE))
                         page_num = metadata.get('page', 0)
                         creation_date = metadata.get('creation_date', '')
+                        source_link = metadata.get('source_link', '')
+                        candidate_info = metadata.get('candidate', candidate_name)
+                        total_pages = metadata.get('total_pages', 0)
                         
+                        # 메타데이터 구성
                         source_metadata = SourceMetadata(
                             page=page_num,
-                            source=source_name,
-                            creation_date=creation_date
+                            source=metadata.get('source', source_name),
+                            creation_date=creation_date,
+                            source_name=source_name,
+                            source_link=source_link,
+                            candidate=candidate_info
                         )
                     
                     # 관련 정책 추가
@@ -395,16 +326,16 @@ def search_documents(query: str, candidate=None, k=5):
         if not source_metadata:
             source_name = DEFAULT_SOURCE
             if candidate_name:
-                source_name = f"{candidate_name}.pdf"
+                source_name = f"{candidate_name} 정책자료"
                 
             source_metadata = SourceMetadata(
                 page=0,
                 source=source_name,
-                creation_date=""
+                creation_date="",
+                source_name=source_name,
+                source_link="",
+                candidate=candidate_name
             )
-        
-        # 소스 메타데이터는 그대로 반환 (이미 소스에 후보자 정보가 포함되어 있음)
-        # 후보자 정보를 다시 추가하지 않음
         
         return results, source_metadata, related_policies[:5]  # 상위 5개만 반환
     
@@ -579,3 +510,87 @@ async def get_rag_response(question: str, candidate=None, conversation_history=N
     
     except Exception as e:
         return create_error_response(f"{ERROR_MESSAGE_RAG}: {str(e)}")
+
+# 기존 AI 응답 생성 함수
+async def get_ai_response(question: str, policies: Optional[List[Policy]] = None) -> ChatResponse:
+    """
+    기존 Gemini 직접 호출 방식의 응답 생성 함수
+    """
+    if not GEMINI_API_KEY:
+        return create_error_response(ERROR_MESSAGE_API_KEY)
+    
+    policy_context = ""
+    related_policies = []
+    source_metadata = None
+
+    if policies and len(policies) > 0:
+        policy_context = "다음 정책들을 바탕으로 답변해주세요:\n\n"
+        
+        # 첫 번째 정책의 메타데이터를 기본 출처로 활용
+        first_policy = policies[0]
+        if hasattr(first_policy, 'meta_info') and first_policy.meta_info:
+            try:
+                metadata_dict = json.loads(first_policy.meta_info)
+                source_metadata = SourceMetadata(
+                    page=metadata_dict.get("page", 0),
+                    source=metadata_dict.get("source", DEFAULT_SOURCE),
+                    creation_date=metadata_dict.get("creation_date", ""),
+                    source_name=metadata_dict.get("source_name", ""),
+                    source_link=metadata_dict.get("source_link", ""),
+                    candidate=metadata_dict.get("candidate", "")
+                )
+            except (json.JSONDecodeError, AttributeError, KeyError) as e:
+                print(f"메타데이터 파싱 오류: {e}")
+        
+        for policy in policies:
+            policy_text = f"후보: {policy.candidate.name}, 제목: {policy.title}, 카테고리: {policy.category}, 내용: {policy.description}"
+            policy_context += policy_text + "\n\n"
+            related_policies.append({
+                "id": policy.id,
+                "candidate_id": policy.candidate_id,
+                "title": policy.title,
+                "category": policy.category
+            })
+    
+    if policy_context:
+        full_prompt = f"{SYSTEM_PROMPT}\n\n{policy_context}\n\n질문: {question}"
+    else:
+        full_prompt = f"{SYSTEM_PROMPT}\n\n질문: {question}"
+
+    try:
+        model = genai.GenerativeModel(
+            model_name=GEMINI_MODEL_NAME,
+            generation_config=generation_config,
+            safety_settings=safety_settings
+        )
+
+        # ⏱️ Gemini 호출에 타임아웃 설정
+        response = await asyncio.wait_for(
+            asyncio.to_thread(model.generate_content, full_prompt),
+            timeout=RESPONSE_TIMEOUT
+        )
+
+        answer_text = response.text if response.candidates and len(response.candidates) > 0 else "죄송합니다. 질문에 대한 답변을 생성할 수 없습니다. 다른 질문을 시도해주세요."
+
+        # 기본 출처 정보 설정
+        if not source_metadata:
+            source_metadata = SourceMetadata(
+                page=0,
+                source=DEFAULT_SOURCE,
+                creation_date="",
+                source_name="",
+                source_link="",
+                candidate=""
+            )
+
+        return ChatResponse(
+            answer=answer_text,
+            related_policies=related_policies,
+            source_metadata=source_metadata
+        )
+
+    except asyncio.TimeoutError:
+        return create_error_response(ERROR_MESSAGE_TIMEOUT)
+    
+    except Exception as e:
+        return create_error_response(f"{ERROR_MESSAGE_SERVER}: {str(e)}")

@@ -9,12 +9,16 @@ import ReactMarkdown from "react-markdown";
 import React from 'react';
 import { startChatSession, resetChatSession } from "@/lib/chat/session";
 import { saveChatMessage } from "@/lib/chat/message";
+import { PDFViewer } from "@/components/pdf-viewer";
 
 // 필요한 타입 정의
 interface SourceMetadata {
   page?: number;
   source?: string;
   creationDate?: string;
+  source_name?: string;
+  source_link?: string;
+  candidate?: string;
 }
 
 interface ApiResponse {
@@ -29,6 +33,9 @@ interface ApiResponse {
     page: number;
     source: string;
     creation_date?: string;
+    source_name: string;
+    source_link: string;
+    candidate: string;
   };
 }
 
@@ -203,18 +210,19 @@ export default function ChatbotCandidatePage() {
       let sourceUrl = undefined;
       
       if (response.source_metadata) {
-        const { page, source } = response.source_metadata;
+        // 소스 메타데이터에서 필요한 정보 추출
+        const { page, source, source_name, source_link } = response.source_metadata;
         
-        // 파일명에서 확장자 제거
-        const sourceFileName = source.replace(/\.[^/.]+$/, "");
+        // 소스 이름이 있으면 그것을 사용, 없으면 소스 파일 이름에서 확장자 제거
+        sourceDescription = source_name || (source ? source.replace(/\.[^/.]+$/, "") : undefined);
         
         // 페이지 번호가 있으면 출처에 포함
-        sourceDescription = page > 0
-          ? `${sourceFileName}(${page}페이지)`
-          : sourceFileName;
+        if (page > 0 && sourceDescription) {
+          sourceDescription = `${sourceDescription}(${page}페이지)`;
+        }
         
-        // sourceUrl 는 나중에 실제 PDF 링크로 대체 가능
-        sourceUrl = undefined;
+        // 소스 링크가 있으면 사용
+        sourceUrl = source_link;
       }
       
       const botMessage: ChatMessage = {
@@ -228,7 +236,10 @@ export default function ChatbotCandidatePage() {
         sourceMetadata: response.source_metadata ? {
           page: response.source_metadata.page,
           source: response.source_metadata.source,
-          creationDate: response.source_metadata.creation_date
+          creationDate: response.source_metadata.creation_date,
+          source_name: response.source_metadata.source_name,
+          source_link: response.source_metadata.source_link,
+          candidate: response.source_metadata.candidate
         } : undefined
       };
       
@@ -348,15 +359,11 @@ export default function ChatbotCandidatePage() {
                   <div className="mt-2 bg-white bg-opacity-50 p-2 rounded text-xs">
                     <p className="text-[#6B7280] flex items-center">
                       <span className="mr-1">📄</span>
-                      출처: {message.sourceUrl ? (
-                        <a
-                          href={message.sourceUrl}
-                          className="text-[#3449FF] underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {message.sourceDescription}
-                        </a>
+                      출처: {message.sourceMetadata?.source_link ? (
+                        <PDFViewer 
+                          pdfUrl={message.sourceMetadata.source_link} 
+                          label={message.sourceDescription}
+                        />
                       ) : (
                         <span>{message.sourceDescription}</span>
                       )}
