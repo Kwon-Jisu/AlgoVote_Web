@@ -3,15 +3,16 @@
 interface PDFViewerProps {
   pdfUrl: string;
   label?: string;
+  page: string;
 }
 
-export const PDFViewer = ({ pdfUrl, label = "문서 보기" }: PDFViewerProps) => {
+export const PDFViewer = ({ pdfUrl, label = "문서 보기", page }: PDFViewerProps) => {
   // pdfUrl이 제공되지 않았을 때의 처리
   if (!pdfUrl) return null;
   
   // URL 인코딩 처리
   const encodedUrl = encodeURIComponent(pdfUrl);
-  const pdfJsUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodedUrl}`;
+  const pdfJsUrl = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodedUrl}#page=${page}`;
   
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();

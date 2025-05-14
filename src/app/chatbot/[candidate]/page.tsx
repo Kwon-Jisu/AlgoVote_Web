@@ -218,7 +218,7 @@ export default function ChatbotCandidatePage() {
         
         // 페이지 번호가 있으면 출처에 포함
         if (page > 0 && sourceDescription) {
-          sourceDescription = `${sourceDescription}(${page}페이지)`;
+          sourceDescription = `${sourceDescription}(p.${page})`;
         }
         
         // 소스 링크가 있으면 사용
@@ -361,8 +361,9 @@ export default function ChatbotCandidatePage() {
                       <span className="mr-1">📄</span>
                       출처: {message.sourceMetadata?.source_link ? (
                         <PDFViewer 
-                          pdfUrl={`${message.sourceMetadata.source_link}#page=${message.sourceMetadata.page}`} 
-                          label={message.sourceDescription} 
+                          pdfUrl={message.sourceMetadata.source_link}
+                          label={message.sourceDescription}
+                          page={message.sourceMetadata.page?.toString() || '1'}
                         />
                       ) : (
                         <span>{message.sourceDescription}</span>
