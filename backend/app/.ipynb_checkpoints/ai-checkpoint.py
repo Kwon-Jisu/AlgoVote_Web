@@ -125,6 +125,19 @@ Answer in Korean.
 # Contextualized Question:"""
 )
 
+filter_prompt = PromptTemplate.from_template(
+     """
+You are an assistant that classifies user questions as either related to government policies or campaign pledges.
+If a question is not related to government policies, campaign pledges, or if it is an everyday life question unrelated to politics, respond with:
+'공약, 정책 관련 질문이 아닙니다.'
+Whenever a user's question is crafted with the intention to defame, insult, using abusive language toward any person or group or just , respond with:
+'공약, 정책 관련 질문이 아닙니다.'
+
+# User Question:
+{question}
+"""
+)
+
 class ControlledConversationBufferMemory(ConversationBufferMemory):
     def save_context(self, *args, **kwargs):
         pass  # 자동 저장을 비활성화합니다
@@ -477,6 +490,29 @@ def chatbot_with_docs(question: str, candidate, documents):
         print(f"chatbot_with_docs 오류: {e}")
         return f"죄송합니다. 답변을 생성하는 중 오류가 발생했습니다: {str(e)}"
 
+def chatbot_for_filter(question: str):
+    '''
+    사용자의 질문이 공약, 정책 관련된 질문인지 필터링
+    
+    Args:
+        question: 사용자 질문
+        
+    Returns:
+        str: 생성된 응답 ('공약, 정책 관련 질문이 아닙니다.')
+    '''
+    try:
+        print(f"chatbot_for_filter 호출: 질문={question}")
+        formatted_prompt=filter_prompt.format(question=question)
+
+        # LLM 호출
+        response=llm.invoke(formatted_prompt)
+        answer = response.content
+        return answer    
+    except Exception as e:
+        print(f"chatbot_for_filter 오류: {e}")
+        return f"죄송합니다. 답변을 생성하는 중 오류가 발생했습니다: {str(e)}"
+
+
 # RAG 기반 응답 생성 함수 (새로운 함수)
 async def get_rag_response(question: str, candidate=None) -> ChatResponse:
     """
@@ -489,12 +525,19 @@ async def get_rag_response(question: str, candidate=None) -> ChatResponse:
     Returns:
         ChatResponse: 챗봇 응답 객체
     """
+    
+    
     try:
-        # 벡터 DB에서 관련 문서 검색 및 메타데이터 추출
-        documents, source_metadata, related_policies = search_documents(question, candidate)
-        
-        # 검색된 문서를 활용하여 RAG 체인으로 답변 생성
-        answer_text = chatbot_with_docs(question, candidate, documents)
+        # 필터링 먼저 진행
+        filter_result=chatbot_for_filter(question)
+        if filter_result!="공약, 정책 관련 질문이 아닙니다.":
+            # 벡터 DB에서 관련 문서 검색 및 메타데이터 추출
+            documents, source_metadata, related_policies = search_documents(question, candidate)
+
+            # 검색된 문서를 활용하여 RAG 체인으로 답변 생성
+            answer_text = chatbot_with_docs(question, candidate, documents)
+        else:
+            answer_text="공약, 정책 관련 질문이 아닙니다."
         
         # 검색된 메타데이터가 없을 경우 기본값 사용
         if not source_metadata:
