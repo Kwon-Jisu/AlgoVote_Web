@@ -5,11 +5,11 @@ export default function VotingInfo() {
   return (
     <div className="bg-background min-h-screen">
       <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12 fade-in">
-        <h1 className="text-3xl font-bold text-text-primary text-center mb-10">투표 안내</h1>
+        <h1 className="text-2xl font-bold text-text-primary text-center mb-10">투표 안내</h1>
         
         {/* 투표일 정보 섹션 */}
         <section className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
+          <h2 className="text-xl font-bold mb-4 flex items-center">
             <i className="ri-calendar-event-line text-primary mr-2"></i>
             투표일 안내
           </h2>
@@ -22,12 +22,12 @@ export default function VotingInfo() {
         
         {/* 투표 자격 섹션 */}
         <section className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
+          <h2 className="text-xl font-bold mb-4 flex items-center">
             <i className="ri-user-star-line text-primary mr-2"></i>
             투표 자격
           </h2>
           <div className="mb-4">
-            <h3 className="text-xl font-medium mb-2">투표일 기준</h3>
+            <h3 className="text-lg font-medium mb-2">투표일 기준</h3>
             <ul className="list-disc pl-5 text-text-secondary space-y-1">
               <li>대한민국 국민</li>
               <li>만 18세 이상(※ 선거일 기준)</li>
@@ -35,7 +35,7 @@ export default function VotingInfo() {
             </ul>
           </div>
           <div>
-            <h3 className="text-xl font-medium mb-2">준비물</h3>
+            <h3 className="text-lg font-medium mb-2">준비물</h3>
             <ul className="list-disc pl-5 text-text-secondary space-y-1">
               <li>신분증(주민등록증, 운전면허증, 여권 등)</li>
               <li>투표 안내문(지참하지 않아도 투표 가능)</li>
@@ -45,7 +45,7 @@ export default function VotingInfo() {
 
         {/* 투표소 찾기 섹션 */}
         <section className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
+          <h2 className="text-xl font-bold mb-4 flex items-center">
             <i className="ri-map-pin-line text-primary mr-2"></i>
             투표소 찾기
           </h2>
@@ -65,7 +65,7 @@ export default function VotingInfo() {
         
         {/* 투표 방법 섹션 */}
         <section className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
+          <h2 className="text-xl font-bold mb-4 flex items-center">
             <i className="ri-file-list-3-line text-primary mr-2"></i>
             투표 절차
           </h2>
@@ -102,7 +102,7 @@ export default function VotingInfo() {
         
         {/* 선거일 행동요령 섹션 */}
         <section className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
+          <h2 className="text-xl font-bold mb-4 flex items-center">
             <i className="ri-information-line text-primary mr-2"></i>
             선거일 행동요령
           </h2>
@@ -136,7 +136,7 @@ export default function VotingInfo() {
 
         {/* 투표 안내 영상 섹션 */}
         <section className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4 flex items-center">
+          <h2 className="text-xl font-bold mb-4 flex items-center">
             <i className="ri-video-line text-primary mr-2"></i>
             투표 안내 영상
           </h2>
