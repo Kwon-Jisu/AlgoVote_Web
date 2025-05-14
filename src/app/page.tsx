@@ -109,7 +109,9 @@ export default function Home() {
             </Link>
           </div>
         </div>
+        {/* 데이터 출처 안내 */}
         <div className="flex flex-col items-center justify-center">
+          <Link href="/data-log">
             <div className="flex flex-row justify-center items-center gap-2 mb-2 relative">
                   <div className="flex items-center gap-8">
                     <Image 
@@ -136,6 +138,7 @@ export default function Home() {
                     </span>
                   </div>
             </div>
+          </Link>
           </div>
       </section>
     </div>
