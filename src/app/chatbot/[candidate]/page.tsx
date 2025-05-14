@@ -361,7 +361,7 @@ export default function ChatbotCandidatePage() {
                       <span className="mr-1">📄</span>
                       출처: {message.sourceMetadata?.source_link ? (
                         <PDFViewer 
-                          pdfUrl={message.sourceMetadata.source_link} 
+                          pdfUrl={`${message.sourceMetadata.source_link}#page=${message.sourceMetadata.page}`} 
                           label={message.sourceDescription}
                         />
                       ) : (
