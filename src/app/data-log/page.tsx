@@ -14,14 +14,14 @@ async function DataLogPage() {
   
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-4">📚 데이터 업데이트 로그</h1>
+      <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-4">📚 데이터 업데이트 로그</h1>
       
       <p className="text-text-secondary mb-8">
         &ldquo;알고투표는 모든 데이터 수집 및 갱신 과정을 투명하게 기록하고 있습니다.&rdquo;
       </p>
       
       <div className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">✅ 업데이트 기록</h2>
+        <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4">✅ 업데이트 기록</h2>
         
         <div className="overflow-x-auto">
           <table className="w-full min-w-[800px] table-fixed border-collapse">
@@ -69,7 +69,7 @@ async function DataLogPage() {
       </div>
       
       <div className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">🛠️ 유의사항</h2>
+        <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4">🛠️ 유의사항</h2>
         <ul className="list-disc pl-6 text-text-secondary space-y-2">
           <li>모든 데이터는 공식 기관 자료를 기반으로 수집 및 검증되었습니다.</li>
           <li>링크가 만료된 경우, 공식 기관 사이트를 참고해 주세요.</li>
