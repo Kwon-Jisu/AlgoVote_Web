@@ -175,12 +175,16 @@ export default function ChatbotCandidatePage() {
     
     // 재시도가 아닐 경우에만 새 메시지 추가
     if (!isRetry) {
-      const newMessages = [...messages, userMessage];
-      setMessages(newMessages);
-      setLastQuestion(content);
+      setMessages(prevMessages => {
+        const newMessages = [...prevMessages, userMessage];
+        
+        // 사용자 메시지 저장 (비동기 처리이므로 즉시 실행)
+        saveChatMessage(userMessage, newMessages.length - 1);
+        
+        return newMessages;
+      });
       
-      // 사용자 메시지 저장
-      await saveChatMessage(userMessage, newMessages.length - 1);
+      setLastQuestion(content);
     }
     
     setIsTyping(true);
@@ -228,11 +232,14 @@ export default function ChatbotCandidatePage() {
         } : undefined
       };
       
-      const newMessages = [...messages, botMessage];
-      setMessages(newMessages);
-      
-      // 봇 메시지 저장
-      await saveChatMessage(botMessage, newMessages.length - 1);
+      setMessages(prevMessages => {
+        const newMessages = [...prevMessages, botMessage];
+        
+        // 봇 메시지 저장
+        saveChatMessage(botMessage, newMessages.length - 1);
+        
+        return newMessages;
+      });
       
       // 성공 시 재시도 카운트 초기화
       setRetryCount(0);
@@ -264,11 +271,14 @@ export default function ChatbotCandidatePage() {
         candidateId: selectedCandidate.id,
       };
       
-      const newMessages = [...messages, botErrorMessage];
-      setMessages(newMessages);
-      
-      // 오류 메시지도 저장
-      await saveChatMessage(botErrorMessage, newMessages.length - 1);
+      setMessages(prevMessages => {
+        const newMessages = [...prevMessages, botErrorMessage];
+        
+        // 오류 메시지도 저장
+        saveChatMessage(botErrorMessage, newMessages.length - 1);
+        
+        return newMessages;
+      });
       
       console.error("답변 생성 중 오류:", error);
     } finally {
