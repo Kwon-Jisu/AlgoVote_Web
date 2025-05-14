@@ -362,7 +362,7 @@ export default function ChatbotCandidatePage() {
                       출처: {message.sourceMetadata?.source_link ? (
                         <PDFViewer 
                           pdfUrl={`${message.sourceMetadata.source_link}#page=${message.sourceMetadata.page}`} 
-                          label={message.sourceDescription}
+                          label={message.sourceDescription} 
                         />
                       ) : (
                         <span>{message.sourceDescription}</span>
