@@ -248,22 +248,38 @@ export default function CandidateDetail() {
         {activeTab === 'qna' && (
           <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
             <h2 className="text-2xl font-bold mb-6">토론회 주요 발언 및 Q&A</h2>
-            {/* {qnas && qnas.length > 0 ? (
-              <div className="space-y-8">
-                {qnas.map((qna) => (
-                  <div key={qna.id} className="p-4 border border-gray-100 rounded-lg">
-                    <h3 className="text-lg font-semibold mb-2">{qna.question}</h3>
-                    <p className="text-text-primary">{qna.answer}</p>
-                  </div>
-                ))}
-              </div>
-            ) : 
-            ( */}
             <div className="text-center py-12">
               <h3 className="text-xl font-medium text-gray-700 mb-2">준비 중입니다</h3>
               <p className="text-gray-500">해당 콘텐츠는 현재 준비 중입니다. 빠른 시일 내에 제공하겠습니다.</p>
             </div>
-            {/* )} */}
+            
+            <div className="mt-8">
+              <h3 className="text-lg font-medium text-gray-800 mb-4">향후 토론회 일정</h3>
+              <div className="overflow-x-auto">
+                <table className="min-w-full border-collapse">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="py-3 px-4 text-left font-semibold text-gray-700">날짜</th>
+                      <th className="py-3 px-4 text-left font-semibold text-gray-700">내용</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-3 px-4 text-gray-800">5월 18일</td>
+                      <td className="py-3 px-4 text-gray-800">1차 후보자토론회 (주제: 경제)</td>
+                    </tr>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-3 px-4 text-gray-800">5월 23일</td>
+                      <td className="py-3 px-4 text-gray-800">2차 후보자토론회 (주제: 사회)</td>
+                    </tr>
+                    <tr className="border-b border-gray-100">
+                      <td className="py-3 px-4 text-gray-800">5월 27일</td>
+                      <td className="py-3 px-4 text-gray-800">3차 후보자토론회 (주제: 정치)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         )}
       </div>
