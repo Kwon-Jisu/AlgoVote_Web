@@ -112,34 +112,33 @@ export default function Home() {
         {/* 데이터 출처 안내 */}
         <div className="flex flex-col items-center justify-center">
           <Link href="/data-log">
-            <div className="flex flex-row justify-center items-center gap-2 mb-2 relative">
-                  <div className="flex items-center gap-8">
-                    <Image 
-                      src="/images/sources/national-election-commission.png"
-                      alt="중앙선거관리위원회"
-                      width={100}
-                      height={100}
-                      className="w-[150px] h-auto sm:w-[150px] md:w-[200px] object-contain"
-                    />
-                    <Image 
-                      src="/images/sources/central-election-broadcast-debate-committee.png"
-                      alt="중앙선거방송토론위원회"
-                      width={100}
-                      height={100}
-                      className="w-[150px] h-auto sm:w-[150px] md:w-[200px] object-contain"
-                    />
-                  </div>
-                  <div className="relative group mb-2">
-                    <div className="w-6 h-6 flex items-center justify-center text-text-secondary cursor-help">
-                      <i className="ri-information-line"></i>
-                    </div>
-                    <span className="absolute right-0 top-full w-72 p-3 bg-white shadow-lg rounded-lg border border-divider text-xs text-text-secondary z-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                      본 서비스는 다음 기관의 공식 자료를 기반으로 데이터 수집 및 가공되었습니다. 클릭시 데이터 수집 현황이 표시됩니다.
-                    </span>
-                  </div>
+            <div className="flex flex-row justify-center items-center gap-2 mb-2 relative group">
+              <div className="flex items-center gap-8">
+                <Image 
+                  src="/images/sources/national-election-commission.png"
+                  alt="중앙선거관리위원회"
+                  width={100}
+                  height={100}
+                  className="w-[150px] h-auto sm:w-[150px] md:w-[200px] object-contain"
+                />
+                <Image 
+                  src="/images/sources/central-election-broadcast-debate-committee.png"
+                  alt="중앙선거방송토론위원회"
+                  width={100}
+                  height={100}
+                  className="w-[150px] h-auto sm:w-[150px] md:w-[200px] object-contain"
+                />
+              </div>
+              <div className="w-6 h-6 flex items-center justify-center text-text-secondary cursor-help">
+                <i className="ri-information-line"></i>
+              </div>
+              <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-80 p-3 bg-white shadow-lg rounded-lg border border-divider text-xs text-text-secondary z-10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                본 서비스는 중앙선거관리위원회와 중앙선거방송토론위원회의 공식 자료를 기반으로 데이터 수집 및 가공되었습니다.<br></br>
+                클릭시 데이터 수집 현황을 확인 할수 있습니다.
+              </span>
             </div>
           </Link>
-          </div>
+        </div>
       </section>
     </div>
   );
