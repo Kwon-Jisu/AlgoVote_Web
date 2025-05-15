@@ -1,13 +1,51 @@
 import { ChatMessage, Candidate } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 interface ChatMessageProps {
   message: ChatMessage;
   candidate?: Candidate;
+  saveMessageToLog?: boolean;
+  sessionId?: string;
 }
 
-export default function ChatMessageComponent({ message, candidate }: ChatMessageProps) {
+export default function ChatMessageComponent({ 
+  message, 
+  candidate, 
+  saveMessageToLog = false,
+  sessionId
+}: ChatMessageProps) {
+  // 채팅 로그 저장 기능
+  useEffect(() => {
+    if (saveMessageToLog && sessionId) {
+      const saveMessageLog = async () => {
+        try {
+          // 채팅 메시지 API로 메시지 저장
+          const payload = {
+            chat_session_id: sessionId,
+            role: message.role,
+            content: message.content,
+            message_order: parseInt(message.id.replace('msg-', '')), // 메시지 순서
+            source_description: message.sourceDescription,
+            source_url: message.sourceUrl,
+            source_metadata: message.sourceMetadata
+          };
+
+          await fetch('/api/chat-message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } catch (error) {
+          console.error('메시지 로그 저장 실패:', error);
+        }
+      };
+
+      saveMessageLog();
+    }
+  }, [message, saveMessageToLog, sessionId]);
+
   if (message.role === 'user') {
     return (
       <div className="flex justify-end mb-4">

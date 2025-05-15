@@ -10,7 +10,7 @@ export default async function AdminDataLogPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">데이터 로그 관리</h1>
+        <h1 className="text-3xl font-bold">출처 로그 관리</h1>
         <Link 
           href="/" 
           className="text-primary hover:underline inline-flex items-center"

@@ -438,7 +438,7 @@ export default function ChatbotCandidatePage() {
         {/* 챗봇 주의사항 */}
         <div className="chat-status mb-2">
           <p className="text-xs text-[#6B7280] mt-1">
-            ※ 이 챗봇은 각 후보의 공식 공약에 기반한 응답을 제공하며, 정보 정확성을 위해 검수되었습니다.
+            ※ 이 챗봇은 공식 공약을 기반으로 답변합니다. 정확한 판단을 위해 공식 자료를 함께 확인해 주세요.
           </p>
         </div>
         <div className="chat-input-container mt-2 bg-white rounded-lg shadow-sm p-2 flex items-center">

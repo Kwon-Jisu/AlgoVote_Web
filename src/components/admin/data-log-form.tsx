@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { addDataLog } from '@/lib/supabase';
+import { addDataLog } from '@/lib/supabase/service';
 
 export default function DataLogForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,11 +27,15 @@ export default function DataLogForm() {
     setMessage(null);
     
     try {
-      const result = await addDataLog(formData);
+      const result = await addDataLog({
+        update_date: formData.update_date,
+        source_organization: formData.source_organization,
+        update_target: formData.update_target,
+        change_summary: formData.change_summary
+      });
       
       if (result) {
         setMessage({ text: '데이터 로그가 성공적으로 추가되었습니다.', type: 'success' });
-        // 폼 초기화
         setFormData({
           update_date: new Date().toISOString().split('T')[0],
           source_organization: '',
@@ -52,7 +56,7 @@ export default function DataLogForm() {
   };
   
   return (
-    <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-sm border border-divider">
+    <div className="bg-white p-6 rounded-lg shadow-sm">
       <h2 className="text-xl font-semibold mb-4">데이터 로그 추가</h2>
       
       {message && (
@@ -67,7 +71,7 @@ export default function DataLogForm() {
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="update_date" className="block text-sm font-medium text-text-secondary mb-1">
+          <label htmlFor="update_date" className="block text-sm font-medium text-[#6B7280] mb-1">
             업데이트 날짜
           </label>
           <input
@@ -77,12 +81,12 @@ export default function DataLogForm() {
             value={formData.update_date}
             onChange={handleChange}
             required
-            className="w-full p-2 border border-divider rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full p-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#3449FF]"
           />
         </div>
         
         <div>
-          <label htmlFor="source_organization" className="block text-sm font-medium text-text-secondary mb-1">
+          <label htmlFor="source_organization" className="block text-sm font-medium text-[#6B7280] mb-1">
             출처 기관
           </label>
           <input
@@ -92,13 +96,13 @@ export default function DataLogForm() {
             value={formData.source_organization}
             onChange={handleChange}
             required
-            className="w-full p-2 border border-divider rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full p-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#3449FF]"
             placeholder="중앙선거관리위원회"
           />
         </div>
         
         <div>
-          <label htmlFor="source_link" className="block text-sm font-medium text-text-secondary mb-1">
+          <label htmlFor="source_link" className="block text-sm font-medium text-[#6B7280] mb-1">
             출처 링크
           </label>
           <input
@@ -107,14 +111,13 @@ export default function DataLogForm() {
             name="source_link"
             value={formData.source_link}
             onChange={handleChange}
-            required
-            className="w-full p-2 border border-divider rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full p-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#3449FF]"
             placeholder="https://www.example.com"
           />
         </div>
         
         <div>
-          <label htmlFor="update_target" className="block text-sm font-medium text-text-secondary mb-1">
+          <label htmlFor="update_target" className="block text-sm font-medium text-[#6B7280] mb-1">
             업데이트 대상
           </label>
           <input
@@ -124,13 +127,13 @@ export default function DataLogForm() {
             value={formData.update_target}
             onChange={handleChange}
             required
-            className="w-full p-2 border border-divider rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full p-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#3449FF]"
             placeholder="후보자 공약집"
           />
         </div>
         
         <div>
-          <label htmlFor="change_summary" className="block text-sm font-medium text-text-secondary mb-1">
+          <label htmlFor="change_summary" className="block text-sm font-medium text-[#6B7280] mb-1">
             변경사항 요약
           </label>
           <input
@@ -140,13 +143,13 @@ export default function DataLogForm() {
             value={formData.change_summary}
             onChange={handleChange}
             required
-            className="w-full p-2 border border-divider rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full p-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#3449FF]"
             placeholder="정책 업데이트 내용 요약"
           />
         </div>
         
         <div>
-          <label htmlFor="note" className="block text-sm font-medium text-text-secondary mb-1">
+          <label htmlFor="note" className="block text-sm font-medium text-[#6B7280] mb-1">
             비고
           </label>
           <textarea
@@ -155,7 +158,7 @@ export default function DataLogForm() {
             value={formData.note}
             onChange={handleChange}
             rows={2}
-            className="w-full p-2 border border-divider rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full p-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-[#3449FF]"
             placeholder="추가 참고사항 (선택사항)"
           />
         </div>
@@ -164,7 +167,7 @@ export default function DataLogForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/90 transition-colors disabled:opacity-70"
+            className="w-full bg-[#3449FF] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors disabled:opacity-70"
           >
             {isLoading ? '추가 중...' : '데이터 로그 추가'}
           </button>
